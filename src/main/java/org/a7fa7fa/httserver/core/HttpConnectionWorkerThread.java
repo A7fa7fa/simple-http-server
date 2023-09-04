@@ -31,8 +31,6 @@ public class HttpConnectionWorkerThread extends Thread {
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
 
-            LOGGER.debug("Estimate Bytes available on input stream : {}", inputStream.available());
-
             HttpParser httpParser = new HttpParser();
             HttpRequest request = httpParser.parseHttpRequest(inputStream);
             if (request.getMethod() == null){

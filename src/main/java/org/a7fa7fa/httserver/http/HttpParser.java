@@ -55,7 +55,7 @@ public class HttpParser {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
                 try {
-                    LOGGER.debug("Request line VERSION to process : {}", processingDataBuffer.toString());
+                    LOGGER.trace("Request line VERSION to process : {}", processingDataBuffer.toString());
                     httpRequest.setHttpVersion(processingDataBuffer.toString());
                 } catch (BadHttpVersionException e) {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -68,12 +68,12 @@ public class HttpParser {
 
             if (_byte == SP) {
                 if (!methodParsed) {
-                    LOGGER.debug("Request line METHOD to process : {}", processingDataBuffer.toString());
+                    LOGGER.trace("Request line METHOD to process : {}", processingDataBuffer.toString());
                     httpRequest.setMethod(processingDataBuffer.toString());
                     processingDataBuffer.delete(0, processingDataBuffer.length());
                     methodParsed = true;
                 } else if (!targetParsed) {
-                    LOGGER.debug("Request line REQUEST TARGET to process : {}", processingDataBuffer.toString());
+                    LOGGER.trace("Request line REQUEST TARGET to process : {}", processingDataBuffer.toString());
                     httpRequest.setRequestTarget(processingDataBuffer.toString());
                     processingDataBuffer.delete(0, processingDataBuffer.length());
                     targetParsed = true;
@@ -124,7 +124,7 @@ public class HttpParser {
 
                 if (processingDataBuffer.isEmpty()) {
                     //empty row. separates header from body
-//                    LOGGER.debug("Header processed : {}", httpRequest.getHeaders().toString());
+                    LOGGER.trace("Header processed : {}", httpRequest.getHeaders().toString());
                     return;
                 }
 
@@ -134,11 +134,11 @@ public class HttpParser {
                     }
                 }
 
-                LOGGER.debug("Request line HEADER-VALUE to process : {}", processingDataBuffer.toString());
+                LOGGER.trace("Request line HEADER-VALUE to process : {}", processingDataBuffer.toString());
                 httpHeader.setValue(processingDataBuffer.toString());
                 processingDataBuffer.delete(0, processingDataBuffer.length());
                 httpRequest.addHeader(httpHeader);
-                LOGGER.debug(httpHeader.toString());
+                LOGGER.trace(httpHeader.toString());
                 httpHeader = new HttpHeader();
                 fieldNameFound = false;
 
@@ -157,7 +157,7 @@ public class HttpParser {
                     if (processingDataBuffer.length() > 1 && processingDataBuffer.charAt(processingDataBuffer.length() - 2) == SP) {
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
-                    LOGGER.debug("Request line HEADER-FIELD-NAME to process : {}", processingDataBuffer.toString());
+                    LOGGER.trace("Request line HEADER-FIELD-NAME to process : {}", processingDataBuffer.toString());
                     httpHeader.setName(processingDataBuffer.toString());
                     fieldNameFound = true;
                     processingDataBuffer.delete(0, processingDataBuffer.length());
@@ -189,7 +189,7 @@ public class HttpParser {
         }
 
         if (contentLength == 0){
-            LOGGER.debug("No body");
+            LOGGER.trace("No body");
             return;
         }
 
@@ -197,9 +197,9 @@ public class HttpParser {
         while ((_byte = reader.read()) >= 0) {
             processingDataBuffer.append((char)_byte);
             if (processingDataBuffer.length() == contentLength){
-                LOGGER.debug("Body read : {}",processingDataBuffer.toString());
-                LOGGER.debug("Content-Length according Header : {}", contentLength);
-                LOGGER.debug("Content body read : {}", processingDataBuffer.length());
+                LOGGER.trace("Body read : {}",processingDataBuffer.toString());
+                LOGGER.trace("Content-Length according Header : {}", contentLength);
+                LOGGER.trace("Content body read : {}", processingDataBuffer.length());
                 httpRequest.setBody(processingDataBuffer.toString());
                 processingDataBuffer.delete(0, processingDataBuffer.length());
                 return;
