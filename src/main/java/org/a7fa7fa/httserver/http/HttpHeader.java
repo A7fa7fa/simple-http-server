@@ -1,28 +1,76 @@
 package org.a7fa7fa.httserver.http;
 
+import java.nio.charset.StandardCharsets;
+
 public class HttpHeader {
+
+    private static final String DELIMITER = ":";
+
+    private static final String SP = " ";
+    private HeaderName field;
     private String originalFieldName;
     private String originalFieldValue;
 
     HttpHeader() {
     }
-
-    public void setFieldName(String nameLiteral) {
-        this.originalFieldName = nameLiteral.trim();
+    public HttpHeader(HeaderName headerFiled, String fieldValue) {
+        this.setName(headerFiled);
+        this.setValue(fieldValue);
     }
-    public void setFieldValue(String valueLiteral) {
+
+    public void setName(HeaderName headerField) {
+        this.originalFieldName = headerField.getName();
+        this.field = headerField;
+    }
+    public void setName(String nameLiteral) {
+        if (nameLiteral.endsWith(DELIMITER)) {
+            nameLiteral = nameLiteral.substring(0,  nameLiteral.length()-1);
+        }
+        nameLiteral = nameLiteral.trim();
+        this.originalFieldName = nameLiteral;
+        this.field = HeaderName.findHeaderField(nameLiteral);
+    }
+
+    public void setValue(String valueLiteral) {
         this.originalFieldValue = valueLiteral.trim();
     }
 
-    public String getOriginalFieldName() {
+    private String getOriginalFieldName() {
         return originalFieldName;
     }
 
-    public String getOriginalFieldValue() {
-        return originalFieldValue;
+    private String getOriginalFieldValue() {
+        return this.originalFieldValue;
+    }
+
+    public String getValue() {
+        return this.getOriginalFieldValue();
+    }
+    public String getName() {
+        if (field == null){
+            return getOriginalFieldName();
+        }
+        return field.getName();
+
+    }
+
+    public HeaderName getHeaderField() {
+        return field;
     }
 
     public String toString(){
-        return this.originalFieldName + this.originalFieldValue;
+        return "Field: " +this.originalFieldName + " Value: " + this.originalFieldValue;
+    }
+
+    public String toStandardFormat() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getName());
+        sb.append(DELIMITER);
+        sb.append(SP);
+        sb.append(this.getValue());
+        return sb.toString();
+    }
+    public byte[] getBytes() {
+        return this.toStandardFormat().getBytes(StandardCharsets.US_ASCII);
     }
 }

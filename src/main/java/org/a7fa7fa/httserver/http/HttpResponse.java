@@ -3,38 +3,45 @@ package org.a7fa7fa.httserver.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 
 public class HttpResponse extends HttpMessage {
-    private final static Logger LOGGER = LoggerFactory.getLogger(HttpResponse.class);
-    private HttpVersion httpVersion;
 
-    private String statusLine; // HTTP-version SP status-code SP reason-phrase CRLF
-    private String headerContentLength = "";
+    final static Logger LOGGER = LoggerFactory.getLogger(HttpResponse.class);
+    private final HttpStatusCode statusCode;
+    private final HttpVersion httpVersion;
 
     private String headers = "";
     private byte[] body;
 
-    private final String SP = " ";
-    private final String NEW_LINE = "\r\n";
+    private final String CRLF = "\r\n";
 
-    public HttpResponse(){
+    public HttpResponse(HttpVersion httpVersion, HttpStatusCode statusCode){
+        this.httpVersion = httpVersion;
+        this.statusCode = statusCode;
+        this.body = new byte[0];
     }
 
-    public void setStatusLine(HttpVersion httpVersion, HttpStatusCode statusCode) {
-        this.statusLine = httpVersion.LITERAL + SP + statusCode.STATUS_CODE + SP + statusCode.MESSAGE + NEW_LINE;
+    public String getStatusLine() { // HTTP-version SP status-code SP reason-phrase //CRLF
+        String SP = " ";
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.httpVersion.LITERAL);
+        sb.append(SP);
+        sb.append(this.statusCode.STATUS_CODE);
+        sb.append(SP);
+        sb.append(this.statusCode.MESSAGE);
+//        sb.append(CRLF);
+        return sb.toString();
     }
 
     public void addBody(byte[] body){
         this.body = body;
-        this.setHeaderContentLength(body.length);
-    }
-
-    public void setHeaderContentLength(long size) {
-        this.headerContentLength = "Content-Length:" + SP + size + NEW_LINE;
     }
 
     public void addHeader(HttpHeader httpHeader){
-        this.headers = httpHeader.getOriginalFieldName() + SP + httpHeader.getOriginalFieldValue() + NEW_LINE;
+        this.headers += httpHeader.toStandardFormat() + CRLF;
     }
 
     private void printMessage(byte[] message) {
@@ -44,18 +51,26 @@ public class HttpResponse extends HttpMessage {
     }
 
     public byte[] getBytes(){
-        byte[] data = this.body;
-        if (this.body == null ) {
-            data = new byte[0];
-        }
-        HttpHeader serverName = new HttpHeader();
-        serverName.setFieldName("Server:");
-        serverName.setFieldValue("My micro Java Server");
-        this.addHeader(serverName);
-        byte[] message = concatResponse(this.statusLine.getBytes(), this.headerContentLength.getBytes(), this.headers.getBytes(), NEW_LINE.getBytes(), data, NEW_LINE.getBytes(), NEW_LINE.getBytes());
-        LOGGER.info("Respond with: {}", this.statusLine);
+        byte[] message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body, CRLF.getBytes(), CRLF.getBytes());
+        LOGGER.info("Respond with: {}", this.getStatusLine());
         // this.printMessage(message);
         return message;
+    }
+
+    public void handleRequest(HttpRequest httpRequest, int  gzipMinFileSizeKb) throws IOException, HttpParsingException {
+        throw new RuntimeException("Not implemented");
+    }
+
+    public boolean clientUnderstandsType(HttpRequest httpRequest, String contentType) {
+        HttpHeader header = httpRequest.getHeader(HeaderName.ACCEPT);
+        if (header == null) {
+            return true;
+        }
+        return (header.getValue().contains(contentType) || header.getValue().contains("*/*"));
+    }
+
+    public void pipe(OutputStream outputStream) throws IOException {
+        outputStream.write(this.getBytes());
     }
 
     public static byte[] concatResponse(byte[]...arrays)

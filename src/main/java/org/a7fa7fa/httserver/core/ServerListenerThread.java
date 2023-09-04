@@ -12,14 +12,14 @@ import java.net.Socket;
 public class ServerListenerThread extends Thread {
     private final static Logger LOGGER = LoggerFactory.getLogger(ServerListenerThread.class);
 
-    private int port;
-    private String webroot;
-    private ServerSocket serverSocket;
+    private final String webroot;
+    private final ServerSocket serverSocket;
+    private final int gzipMinFileSizeKb;
 
-    public ServerListenerThread(int port, String webroot) throws IOException {
-        this.port = port;
+    public ServerListenerThread(int port, String webroot, int gzipMinFileSizeKb) throws IOException {
         this.webroot = webroot;
-        serverSocket = new ServerSocket(this.port);
+        this.serverSocket = new ServerSocket(port);
+        this.gzipMinFileSizeKb = gzipMinFileSizeKb;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ServerListenerThread extends Thread {
 
                 Socket socket = serverSocket.accept();
                 LOGGER.info("Connection accepted: " + socket.getInetAddress());
-                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket, this.webroot);
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket, this.webroot, this.gzipMinFileSizeKb);
                 workerThread.start();
 
             }

@@ -14,10 +14,12 @@ public class HttpConnectionWorkerThread extends Thread {
 
     private final Socket socket;
     private final String webroot;
+    private final int gzipMinFileSizeKb;
 
-    public HttpConnectionWorkerThread(Socket socket, String webroot) {
+    public HttpConnectionWorkerThread(Socket socket, String webroot, int gzipMinFileSizeKb) {
         this.socket = socket;
         this.webroot = webroot;
+        this.gzipMinFileSizeKb = gzipMinFileSizeKb;
     }
 
     @Override
@@ -29,25 +31,23 @@ public class HttpConnectionWorkerThread extends Thread {
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
 
+            LOGGER.debug("Estimate Bytes available on input stream : {}", inputStream.available());
+
             HttpParser httpParser = new HttpParser();
             HttpRequest request = httpParser.parseHttpRequest(inputStream);
-
-            if (request.getRequestTarget() == null && request.getMethod() == null){
-                System.out.println("what the hell");
+            if (request.getMethod() == null){
                 return;
             }
 
-            RequestHandler requestHandler = new RequestHandler(this.webroot);
-            HttpResponse httpResponse = requestHandler.generateResponse(request);
+            HttpResponse httpResponse = HttpResponseFactory.generateResponseFor(request, this.webroot);
+            httpResponse.handleRequest(request, gzipMinFileSizeKb);
 
-            outputStream.flush();
-            outputStream.write(httpResponse.getBytes());
+            httpResponse.pipe(outputStream);
 
         } catch (HttpParsingException e) {
             LOGGER.error("Problem with communication", e);
             if (outputStream != null) {
-                HttpResponse response = new HttpResponse();
-                response.setStatusLine(HttpVersion.HTTP_1_1, e.getErrorCode());
+                HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1, e.getErrorCode());
                 try {
                     outputStream.write(response.getBytes());
                 } catch (IOException ex) {}

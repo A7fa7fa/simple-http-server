@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.zip.GZIPOutputStream;
+import java.io.ByteArrayOutputStream;
 
 public class Reader {
 
@@ -27,6 +29,14 @@ public class Reader {
         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_404_NOT_FOUND);
     }
 
+    public static String probeContentType(Path path) {
+        String fileType = null;
+        try {
+            fileType = Files.probeContentType(path);
+        } catch (IOException e) {}
+        return fileType;
+    }
+
     public static long getFileSize(Path filePath) throws IOException {
         return Files.size(filePath);
     }
@@ -34,5 +44,16 @@ public class Reader {
     public static byte[] readFile(Path filePath) throws IOException {
         byte[] data = Files.readAllBytes(filePath);
         return data;
+    }
+
+    public static byte[] compress(byte[] file) throws IOException {
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
+        zipStream.write(file);
+        zipStream.close();
+        byte[] byteBody = byteStream.toByteArray();
+        return byteBody;
+
     }
 }

@@ -3,6 +3,7 @@ package org.a7fa7fa.httserver.config;
 public class Configuration {
     private int port;
     private String webroot;
+    private int gzipMinFileSizeKb;
 
     public int getPort() {
         return port;
@@ -18,5 +19,13 @@ public class Configuration {
 
     public void setWebroot(String webroot) {
         this.webroot = webroot;
+    }
+
+    public int getGzipMinFileSizeKb() {
+        return gzipMinFileSizeKb;
+    }
+
+    public void setGzipMinFileSizeKb(int gzipMinFileSizeKb) {
+        this.gzipMinFileSizeKb = gzipMinFileSizeKb;
     }
 }

@@ -1,6 +1,6 @@
 package org.a7fa7fa.httserver.http;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HttpRequest extends HttpMessage {
 
@@ -8,7 +8,7 @@ public class HttpRequest extends HttpMessage {
     private String requestTarget;
     private String originalHttpVersion; // literal from the request
     private HttpVersion bestCompatibleHttpVersion;
-    private final ArrayList<HttpHeader> httpHeaders = new ArrayList<HttpHeader>();
+    private final HashMap<String, HttpHeader> httpHeaders = new HashMap<String, HttpHeader>();
 
     HttpRequest(){}
 
@@ -53,12 +53,16 @@ public class HttpRequest extends HttpMessage {
         return originalHttpVersion;
     }
 
-    public ArrayList<HttpHeader> getHeaders() {
+    public HashMap<String, HttpHeader> getHeaders() {
         return httpHeaders;
     }
 
     public void addHeader(HttpHeader httpHeader) {
-        this.httpHeaders.add(httpHeader);
+        this.httpHeaders.put(httpHeader.getName(), httpHeader);
+    }
+
+    public HttpHeader getHeader(HeaderName field) {
+        return this.httpHeaders.get(field.getName());
     }
 
     public String toString(){

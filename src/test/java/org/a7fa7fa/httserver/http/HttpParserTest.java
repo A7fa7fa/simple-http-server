@@ -130,6 +130,62 @@ class HttpParserTest {
         }
     }
 
+    @Test
+    void parseSpaceBeforeColonHeader() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateSpaceBeforeColonHeaderTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+    @Test
+    void parseQuotedHeaderTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderTestCase());
+            assertEquals(httpRequest.getHeaders().get("Host").getValue(), "\"localhost:8080\"");
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void parseQuotedHeaderWithoutClosingQuotTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithoutClosingQuoteTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+    @Test
+    void parseQuotedHeaderWithoutWithNewLineTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithNewLineTestCase());
+            assertEquals(httpRequest.getHeaders().get("Host").getValue(), "\"localhost \r\n :8080\"");
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void parseHeaderKnownHeaderTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateValidTestCase());
+            assertEquals(httpRequest.getHeaders().get("Accept").getValue(), "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            assertEquals(httpRequest.getHeaders().get("Accept").getHeaderField().getFieldNameLowerCase(), "accept");
+            assertEquals(httpRequest.getHeaders().get("Accept").getHeaderField().getName(), "Accept");
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+    }
+
+
     private InputStream generateValidTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Host: localhost:8080\r\n" +
@@ -141,6 +197,9 @@ class HttpParserTest {
                 "Sec-Fetch-Mode: navigate\r\n" +
                 "Accept-Encoding: gzip, deflate, br\r\n" +
                 "Accept-Language: en-US,en;q=0.9\r\n" +
+                "\r\n" +
+                "body1\r\n" +
+                "body2\r\n" +
                 "\r\n";
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
         return inputStream;
@@ -215,4 +274,36 @@ class HttpParserTest {
         return inputStream;
     }
 
+
+    private InputStream generateSpaceBeforeColonHeaderTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Host : localhost:8080\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generateQuotedHeaderTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Host: \"localhost:8080\"\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generateQuotedHeaderWithoutClosingQuoteTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Host: \"localhost :8080\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generateQuotedHeaderWithNewLineTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Host: \"localhost \r\n :8080\"\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
 }
