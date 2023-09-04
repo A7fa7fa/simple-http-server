@@ -20,7 +20,7 @@ public class HttpResponseGET extends HttpResponse {
         Path filePath = Reader.getFilePath(this.webroot, httpRequest.getRequestTarget());
         this.addHeader(new HttpHeader(HeaderName.SERVER, "My micro Java Server"));
         String contentType = Reader.probeContentType(filePath);
-        if (!this.clientUnderstandsType(httpRequest, contentType)) {
+        if (this.clientNotUnderstandsType(httpRequest, contentType)) {
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_415_UNSUPPORTED_MEDIA_TYPE);
         }
         if (contentType != null) {

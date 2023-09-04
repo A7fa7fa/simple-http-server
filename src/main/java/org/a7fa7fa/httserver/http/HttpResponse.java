@@ -61,12 +61,12 @@ public class HttpResponse extends HttpMessage {
         throw new RuntimeException("Not implemented");
     }
 
-    public boolean clientUnderstandsType(HttpRequest httpRequest, String contentType) {
+    public boolean clientNotUnderstandsType(HttpRequest httpRequest, String contentType) {
         HttpHeader header = httpRequest.getHeader(HeaderName.ACCEPT);
         if (header == null) {
-            return true;
+            return false;
         }
-        return (header.getValue().contains(contentType) || header.getValue().contains("*/*"));
+        return !(header.getValue().contains(contentType) || header.getValue().contains("*/*"));
     }
 
     public void pipe(OutputStream outputStream) throws IOException {
