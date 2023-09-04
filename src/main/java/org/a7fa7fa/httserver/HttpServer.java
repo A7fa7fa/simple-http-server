@@ -18,7 +18,12 @@ public class HttpServer {
 
         LOGGER.info("Server starting...");
 
-        ConfigurationManager.getInstance().loadConfigurationFile("src/main/resources/http.json");
+        String path = "src/main/resources/http.json";
+        if (args != null && args.length == 1) {
+            path = args[0];
+        }
+
+        ConfigurationManager.getInstance().loadConfigurationFile(path);
         Configuration conf = ConfigurationManager.getInstance().getCurrentConfiguration();
         LOGGER.info("Using port: " + conf.getPort());
         LOGGER.info("Using webroot: " + conf.getWebroot());
