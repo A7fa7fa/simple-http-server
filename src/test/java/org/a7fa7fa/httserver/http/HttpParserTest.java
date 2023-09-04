@@ -3,6 +3,7 @@ package org.a7fa7fa.httserver.http;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Headers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,7 +32,8 @@ class HttpParserTest {
         assertEquals(httpRequest.getRequestTarget(), "/");
         assertEquals(httpRequest.getOriginalHttpVersion(), "HTTP/1.1");
         assertEquals(httpRequest.getBestCompatibleHttpVersion(), HttpVersion.HTTP_1_1);
-
+        assertEquals(httpRequest.getHeader(HeaderName.CONTENT_LENGTH).getValue(), "14");
+        assertEquals(httpRequest.getBody(), "body1\r\nbody2\r\n");
     }
     @Test
     void parseHttpRequestBadMethod() {
@@ -145,7 +147,7 @@ class HttpParserTest {
         HttpRequest httpRequest = null;
         try {
             httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderTestCase());
-            assertEquals(httpRequest.getHeaders().get("Host").getValue(), "\"localhost:8080\"");
+            assertEquals(httpRequest.getHeaders().get("host").getValue(), "\"localhost:8080\"");
         } catch (HttpParsingException e) {
             fail(e);
         }
@@ -166,7 +168,7 @@ class HttpParserTest {
         HttpRequest httpRequest = null;
         try {
             httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithNewLineTestCase());
-            assertEquals(httpRequest.getHeaders().get("Host").getValue(), "\"localhost \r\n :8080\"");
+            assertEquals(httpRequest.getHeaders().get("host").getValue(), "\"localhost \r\n :8080\"");
         } catch (HttpParsingException e) {
             fail(e);
         }
@@ -177,14 +179,59 @@ class HttpParserTest {
         HttpRequest httpRequest = null;
         try {
             httpRequest = httpParser.parseHttpRequest(generateValidTestCase());
-            assertEquals(httpRequest.getHeaders().get("Accept").getValue(), "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
-            assertEquals(httpRequest.getHeaders().get("Accept").getHeaderField().getFieldNameLowerCase(), "accept");
-            assertEquals(httpRequest.getHeaders().get("Accept").getHeaderField().getName(), "Accept");
+            assertEquals(httpRequest.getHeaders().get("accept").getValue(), "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            assertEquals(httpRequest.getHeaders().get("accept").getHeaderField().getName(), "accept");
+            assertEquals(httpRequest.getHeaders().get("accept").getHeaderField().getName(), "accept");
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+    }
+    @Test
+    void parseHeaderGetByEnumTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateValidTestCase());
+            assertEquals(httpRequest.getHeader(HeaderName.ACCEPT).getValue(), "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+            assertEquals(httpRequest.getHeader(HeaderName.ACCEPT).getHeaderField().getName(), "accept");
+            assertEquals(httpRequest.getHeader(HeaderName.ACCEPT).getHeaderField().getName(), "accept");
         } catch (HttpParsingException e) {
             fail(e);
         }
     }
 
+    @Test
+    void parseHeaderWhitespaceInHeaderNameTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateWhitespaceInHeaderNameTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+
+    @Test
+    void parseBodyNoContentLengthButTransferEncodingTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderWithTransferEncodingTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
+        }
+    }
+
+    @Test
+    void parseBodyWithContentTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateValidBodyTestCase());
+            assertNotNull(httpRequest);
+            assertEquals(httpRequest.getBody(), "body1\r\nbody2\r\n");
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+    }
 
     private InputStream generateValidTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
@@ -197,6 +244,7 @@ class HttpParserTest {
                 "Sec-Fetch-Mode: navigate\r\n" +
                 "Accept-Encoding: gzip, deflate, br\r\n" +
                 "Accept-Language: en-US,en;q=0.9\r\n" +
+                "Content-Length: 14\r\n" +
                 "\r\n" +
                 "body1\r\n" +
                 "body2\r\n" +
@@ -303,6 +351,32 @@ class HttpParserTest {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Host: \"localhost \r\n :8080\"\r\n" +
                 "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generateWhitespaceInHeaderNameTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Ho st: localhost:8080\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+    private InputStream generateNoContentLengthHeaderWithTransferEncodingTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+
+    private InputStream generateValidBodyTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Content-Length: 14\r\n" +
+                "\r\n" +
+                "body1\r\n" +
+                "body2\r\n";
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
         return inputStream;
     }

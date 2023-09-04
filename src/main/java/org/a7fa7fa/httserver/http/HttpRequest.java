@@ -10,6 +10,8 @@ public class HttpRequest extends HttpMessage {
     private HttpVersion bestCompatibleHttpVersion;
     private final HashMap<String, HttpHeader> httpHeaders = new HashMap<String, HttpHeader>();
 
+    private String body;
+
     HttpRequest(){}
 
     public HttpMethod getMethod() {
@@ -44,6 +46,14 @@ public class HttpRequest extends HttpMessage {
         if (this.bestCompatibleHttpVersion == null) {
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
         }
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public HttpVersion getBestCompatibleHttpVersion() {

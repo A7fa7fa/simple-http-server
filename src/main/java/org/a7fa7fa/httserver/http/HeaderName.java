@@ -9,20 +9,14 @@ public enum HeaderName {
     TRANSFER_ENCODING("Transfer-Encoding"),
     ACCEPT("Accept");
 
-    private final String name;
     private final String fieldNameLowerCase;
 
     HeaderName(String name){
-        this.name = name;
         this.fieldNameLowerCase = name.toLowerCase();
     }
 
     public String getName(){
-        return this.name;
-    }
-
-    public String getFieldNameLowerCase() {
-        return fieldNameLowerCase;
+        return this.fieldNameLowerCase;
     }
 
     public static HeaderName findHeaderField(String fieldName) {
@@ -32,7 +26,7 @@ public enum HeaderName {
             name.deleteCharAt(name.length() - 1);
         }
         for (HeaderName field : HeaderName.values()) {
-            if (field.getFieldNameLowerCase().contentEquals(name)) {
+            if (field.getName().contentEquals(name)) {
                 return field;
             }
         }

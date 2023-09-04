@@ -114,7 +114,7 @@ public class HttpParser {
         int _byte;
         while ((_byte = reader.read()) >= 0) {
             if (_byte == QUOTATION) {
-                processingDataBuffer.append((char)_byte);
+                processingDataBuffer.append((char) _byte);
                 processingDataBuffer.append(parseQuote(reader));
             } else if (_byte == CR) {
                 _byte = reader.read();
@@ -122,13 +122,13 @@ public class HttpParser {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
 
-                if (processingDataBuffer.isEmpty()){
+                if (processingDataBuffer.isEmpty()) {
                     //empty row. separates header from body
 //                    LOGGER.debug("Header processed : {}", httpRequest.getHeaders().toString());
                     return;
                 }
 
-                if (processingDataBuffer.toString().trim().isEmpty()){
+                if (processingDataBuffer.toString().trim().isEmpty()) {
                     if (fieldNameFound) {
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
@@ -138,17 +138,23 @@ public class HttpParser {
                 httpHeader.setValue(processingDataBuffer.toString());
                 processingDataBuffer.delete(0, processingDataBuffer.length());
                 httpRequest.addHeader(httpHeader);
+                LOGGER.debug(httpHeader.toString());
                 httpHeader = new HttpHeader();
                 fieldNameFound = false;
 
             } else {
-                boolean isLeadingSpace = processingDataBuffer.isEmpty() && (char)_byte == SP;
+                boolean isLeadingSpace = processingDataBuffer.isEmpty() && (char) _byte == SP;
                 if (!isLeadingSpace) {
-                    processingDataBuffer.append((char)_byte);
+                    processingDataBuffer.append((char) _byte);
                 }
+                boolean headerNameContainsSpace = !processingDataBuffer.isEmpty() && (char) _byte == SP;
+                if (headerNameContainsSpace && !fieldNameFound) {
+                    throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+                }
+
                 if (_byte == COLON && !fieldNameFound) {
 
-                    if (processingDataBuffer.length() > 1 && processingDataBuffer.charAt(processingDataBuffer.length()-2) == SP) {
+                    if (processingDataBuffer.length() > 1 && processingDataBuffer.charAt(processingDataBuffer.length() - 2) == SP) {
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
                     LOGGER.debug("Request line HEADER-FIELD-NAME to process : {}", processingDataBuffer.toString());
@@ -161,31 +167,26 @@ public class HttpParser {
 
         }
 
-    }
+        }
+
 
     private void parseBody(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {
         StringBuilder processingDataBuffer = new StringBuilder();
         int contentLength = 0;
-        HttpHeader header;
-        if ((header = httpRequest.getHeader(HeaderName.CONTENT_LENGTH)) != null){
+        HttpHeader header = httpRequest.getHeader(HeaderName.CONTENT_LENGTH);
+        if (header != null){
             contentLength = Integer.parseInt(header.getValue());
-
-            if ((header = httpRequest.getHeader(HeaderName.TRANSFER_ENCODING)) != null) {
-                // If a message is received with both a Transfer-Encoding and a Content-Length header field
-                // the Transfer-Encoding overrides the Content-Length.
-                // Such a message might indicate an attempt to
-                // perform request smuggling (Section 9.5) or response splitting
-                // (Section 9.4) and ought to be handled as an error.
-                // A sender MUST remove the received Content-Length field prior to forwarding such a message downstream.
-                // TODO
-                throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
-            }
         }
-        if ((header = httpRequest.getHeader(HeaderName.TRANSFER_ENCODING)) != null) {
+        if (header == null && httpRequest.getHeader(HeaderName.TRANSFER_ENCODING) != null) {
+            // If a message is received with both a Transfer-Encoding and a Content-Length header field
+            // the Transfer-Encoding overrides the Content-Length.
+            // Such a message might indicate an attempt to
+            // perform request smuggling (Section 9.5) or response splitting
+            // (Section 9.4) and ought to be handled as an error.
+            // A sender MUST remove the received Content-Length field prior to forwarding such a message downstream.
             // TODO: Chunking to be implemented.
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
         }
-
 
         if (contentLength == 0){
             LOGGER.debug("No body");
@@ -199,6 +200,8 @@ public class HttpParser {
                 LOGGER.debug("Body read : {}",processingDataBuffer.toString());
                 LOGGER.debug("Content-Length according Header : {}", contentLength);
                 LOGGER.debug("Content body read : {}", processingDataBuffer.length());
+                httpRequest.setBody(processingDataBuffer.toString());
+                processingDataBuffer.delete(0, processingDataBuffer.length());
                 return;
             }
         }

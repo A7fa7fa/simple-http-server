@@ -26,7 +26,7 @@ public class HttpHeader {
         if (nameLiteral.endsWith(DELIMITER)) {
             nameLiteral = nameLiteral.substring(0,  nameLiteral.length()-1);
         }
-        nameLiteral = nameLiteral.trim();
+        nameLiteral = nameLiteral.toLowerCase();
         this.originalFieldName = nameLiteral;
         this.field = HeaderName.findHeaderField(nameLiteral);
     }
