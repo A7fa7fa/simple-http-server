@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class HttpServer {
 
@@ -15,15 +17,17 @@ public class HttpServer {
     private final static ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
     public static void main(String[] args){
         rootLogger.setLevel(Level.DEBUG);
+        String config = "src/main/resources/http.json";
 
         LOGGER.info("Server starting...");
 
-        String path = "src/main/resources/http.json";
         if (args != null && args.length == 1) {
-            path = args[0];
+            config = args[0];
+        } else if (Files.exists(Paths.get("http.json"))) {
+            config = "http.json";
         }
 
-        ConfigurationManager.getInstance().loadConfigurationFile(path);
+        ConfigurationManager.getInstance().loadConfigurationFile(config);
         Configuration conf = ConfigurationManager.getInstance().getCurrentConfiguration();
         LOGGER.info("Using port: " + conf.getPort());
         LOGGER.info("Using webroot: " + conf.getWebroot());
