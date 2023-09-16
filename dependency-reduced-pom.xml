@@ -13,7 +13,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>org.a7fa7fa.httserver.HttpServer</mainClass>
+              <mainClass>org.a7fa7fa.httpserver.HttpServer</mainClass>
             </manifest>
           </archive>
         </configuration>
