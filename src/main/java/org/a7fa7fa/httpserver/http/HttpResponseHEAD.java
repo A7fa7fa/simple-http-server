@@ -1,6 +1,6 @@
 package org.a7fa7fa.httpserver.http;
 
-import org.a7fa7fa.httpserver.root.Reader;
+import org.a7fa7fa.httpserver.staticcontent.Reader;
 
 import java.io.IOException;
 import java.nio.file.Path;

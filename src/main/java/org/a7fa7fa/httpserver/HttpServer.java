@@ -1,8 +1,9 @@
 package org.a7fa7fa.httpserver;
 
-import ch.qos.logback.classic.Level;
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.config.ConfigurationManager;
+import org.a7fa7fa.httpserver.api.MyStaticFunctions;
+import org.a7fa7fa.httpserver.router.Router;
 import org.a7fa7fa.httpserver.core.ServerListenerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,20 @@ public class HttpServer {
         LOGGER.info("Using webroot : " + conf.getWebroot());
         LOGGER.info("Min file size for compressing : " + conf.getGzipMinFileSizeKb());
         LOGGER.info("Log level : " + conf.getLogLevelLiteral());
+        LOGGER.info("Api path : " + conf.getApiPath());
 
         rootLogger.setLevel(conf.getLoglevel());
+
+        final Router routes = Router.getInstance();
+        routes.register(MyStaticFunctions.class);
+
+        // Call a registered function
+//        Consumer<HttpRequest> function = routes.getFunction("myStaticFunction");
+//        if (function != null) {
+//            function.accept(new HttpRequest());
+//        } else {
+//            System.out.println("Function not found");
+//        }
 
         try {
             final ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(), conf.getWebroot(), conf.getGzipMinFileSizeKb());

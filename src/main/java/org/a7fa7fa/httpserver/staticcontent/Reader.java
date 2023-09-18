@@ -1,4 +1,4 @@
-package org.a7fa7fa.httpserver.root;
+package org.a7fa7fa.httpserver.staticcontent;
 
 import org.a7fa7fa.httpserver.http.HttpParsingException;
 import org.a7fa7fa.httpserver.http.HttpStatusCode;

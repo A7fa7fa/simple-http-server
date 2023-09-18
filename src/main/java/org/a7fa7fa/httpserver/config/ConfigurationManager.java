@@ -2,7 +2,7 @@ package org.a7fa7fa.httpserver.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.a7fa7fa.httpserver.json.Json;
+import org.a7fa7fa.httpserver.parser.Json;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

@@ -1,4 +1,4 @@
-package org.a7fa7fa.httpserver.json;
+package org.a7fa7fa.httpserver.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;

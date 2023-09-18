@@ -22,6 +22,7 @@ public class ServerListenerThread extends Thread {
 
     @Override
     public void run() {
+        LOGGER.info("Ready to accept connections...");
         try {
 
             while (serverSocket.isBound() && !serverSocket.isClosed()) {

@@ -7,6 +7,7 @@ public class Configuration {
     private String webroot;
     private int gzipMinFileSizeKb;
     private String logLevel;
+    private String apiPath;
 
     public int getPort() {
         return port;
@@ -38,4 +39,12 @@ public class Configuration {
         return LogLevel.parseLogLevel(logLevel);
     }
     public void setLogLevel(String logLevel) {this.logLevel = logLevel; }
+
+    public String getApiPath() {
+        return apiPath;
+    }
+
+    public void setApiPath(String apiPath) {
+        this.apiPath = apiPath;
+    }
 }
