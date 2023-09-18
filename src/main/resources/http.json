@@ -1,5 +1,6 @@
 {
   "port": 8080,
-  "webroot": "C:/Users/JMD1FE/Desktop/testwebroot/",
-  "gzipMinFileSizeKb": 5
+  "webroot": "..",
+  "gzipMinFileSizeKb": 5,
+  "logLevel": "debug"
 }

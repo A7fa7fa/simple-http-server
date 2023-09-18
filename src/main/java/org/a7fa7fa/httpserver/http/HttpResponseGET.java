@@ -18,13 +18,13 @@ public class HttpResponseGET extends HttpResponse {
     @Override
     public void handleRequest(HttpRequest httpRequest, int  gzipMinFileSizeKb) throws IOException, HttpParsingException {
         Path filePath = Reader.getFilePath(this.webroot, httpRequest.getRequestTarget());
-        this.addHeader(new HttpHeader(HeaderName.SERVER, "My micro Java Server"));
+        this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
         String contentType = Reader.probeContentType(filePath);
-        if (this.clientNotUnderstandsType(httpRequest, contentType)) {
-            throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_415_UNSUPPORTED_MEDIA_TYPE);
-        }
         if (contentType != null) {
-            this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, Reader.probeContentType(filePath)));
+            if (this.clientNotUnderstandsType(httpRequest, contentType)) {
+                throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_415_UNSUPPORTED_MEDIA_TYPE);
+            }
+            this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, contentType));
         }
         byte[] body = Reader.readFile(filePath);
         // TODO You should not allow your web server to compress image files or PDF files
@@ -35,8 +35,9 @@ public class HttpResponseGET extends HttpResponse {
             int sizeBeforeCompressing = body.length;
             body = Reader.compress(body);
             this.addHeader(new HttpHeader(HeaderName.CONTENT_ENCODING, encodingToken));
-            LOGGER.info("Request encoded : {} - size kb before/after {}/{}", encodingToken, sizeBeforeCompressing/ 1024, body.length/ 1024);
+            LOGGER.info("Request encoded : {} - size kb before/after {}/{}", encodingToken, sizeBeforeCompressing, body.length);
         }
+        this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
 
         this.addBody(body);
         this.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(body.length)));

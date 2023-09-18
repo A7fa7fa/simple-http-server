@@ -34,6 +34,7 @@ public class HttpConnectionWorkerThread extends Thread {
             HttpParser httpParser = new HttpParser();
             HttpRequest request = httpParser.parseHttpRequest(inputStream);
             if (request.getMethod() == null){
+                LOGGER.debug("Closing empty request");
                 return;
             }
 

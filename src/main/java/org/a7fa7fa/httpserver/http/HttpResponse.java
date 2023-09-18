@@ -5,12 +5,16 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 
 public class HttpResponse extends HttpMessage {
 
     final static Logger LOGGER = LoggerFactory.getLogger(HttpResponse.class);
-    private final HttpStatusCode statusCode;
+    private HttpStatusCode statusCode;
     private final HttpVersion httpVersion;
 
     private String headers = "";
@@ -22,6 +26,10 @@ public class HttpResponse extends HttpMessage {
         this.httpVersion = httpVersion;
         this.statusCode = statusCode;
         this.body = new byte[0];
+    }
+
+    public void setStatusCode(HttpStatusCode statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getStatusLine() { // HTTP-version SP status-code SP reason-phrase //CRLF
@@ -51,7 +59,13 @@ public class HttpResponse extends HttpMessage {
     }
 
     public byte[] getBytes(){
-        byte[] message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body, CRLF.getBytes(), CRLF.getBytes());
+        byte[] message;
+        if (this.body.length == 0) {
+            message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes());
+        } else {
+        message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
+        }
+
         LOGGER.info("Respond with: {}", this.getStatusLine());
         // this.printMessage(message);
         return message;
@@ -72,6 +86,15 @@ public class HttpResponse extends HttpMessage {
     public void pipe(OutputStream outputStream) throws IOException {
         outputStream.write(this.getBytes());
     }
+
+    String getServerTime() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return dateFormat.format(calendar.getTime());
+    }
+
 
     public static byte[] concatResponse(byte[]...arrays)
     {
