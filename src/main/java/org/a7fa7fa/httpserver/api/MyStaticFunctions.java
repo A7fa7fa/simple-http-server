@@ -1,10 +1,11 @@
 package org.a7fa7fa.httpserver.api;
 
+import org.a7fa7fa.httpserver.router.Controller;
 import org.a7fa7fa.httpserver.router.RegisterFunction;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.HttpRequest;
 
-public class MyStaticFunctions {
+public class MyStaticFunctions implements Controller {
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/api/resource")
     public static void myStaticFunction(HttpRequest httpRequest) {

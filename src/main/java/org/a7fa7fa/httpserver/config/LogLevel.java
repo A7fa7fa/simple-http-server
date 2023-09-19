@@ -17,7 +17,7 @@ public class LogLevel {
         levels[4] = "error";
     }
 
-    public static Level parseLogLevel(String levelLiteral) throws IllegalArgumentException {
+    public static Level parseLogLevel(String levelLiteral) throws HttpConfigurationException {
         return switch (levelLiteral) {
             case "trace" -> Level.TRACE;
             case "debug" -> Level.DEBUG;

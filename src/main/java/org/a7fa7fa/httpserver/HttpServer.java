@@ -8,7 +8,6 @@ import org.a7fa7fa.httpserver.core.ServerListenerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -40,13 +39,13 @@ public class HttpServer {
 
         rootLogger.setLevel(conf.getLoglevel());
 
-        final Router routes = Router.getInstance();
-        routes.register(MyStaticFunctions.class);
-
         try {
+            final Router routes = Router.getInstance();
+            routes.register(MyStaticFunctions.class);
+
             final ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(), conf.getWebroot(), conf.getGzipMinFileSizeKb(), conf.getApiPath());
             serverListenerThread.start();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             // TODO handel later
         }

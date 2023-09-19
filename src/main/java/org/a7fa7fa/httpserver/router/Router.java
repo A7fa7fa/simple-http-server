@@ -1,14 +1,13 @@
 package org.a7fa7fa.httpserver.router;
 
+import org.a7fa7fa.httpserver.api.MyStaticFunctions;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Router {
@@ -27,7 +26,21 @@ public class Router {
         return myRouter;
     }
 
-    public void register(Class<?> clazz) {
+    private boolean implementsControllerInterface(Class<?> clazz) {
+        Class<?>[] interfaces = clazz.getInterfaces();
+        if (interfaces.length > 0) {
+            Set<Class<?>> res = new HashSet<>(Arrays.asList(interfaces));
+            return res.contains(Controller.class);
+        }
+        return false;
+    }
+
+    public <ControllerInterface extends Controller> void register(Class<ControllerInterface> clazz) throws Exception {
+
+        if (!this.implementsControllerInterface(clazz)){
+            throw new Exception("Class does not implement controller interface");
+        }
+
         // Get all the methods declared in the provided class
         Method[] methods = clazz.getDeclaredMethods();
 
