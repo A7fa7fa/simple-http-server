@@ -53,11 +53,16 @@ public class HttpResponse extends HttpMessage {
     public void addHeader(HttpHeader httpHeader){
         this.headers += httpHeader.toStandardFormat() + CRLF;
     }
+    public String getHeaders(){
+        return this.headers;
+    }
 
-    private void printMessage(byte[] message) {
-        for (byte _byte: message ){
-            System.out.print((char)_byte);
+    public static String byteToString(byte[] message) {
+        StringBuilder sb = new StringBuilder();
+        for (byte _byte: message) {
+            sb.append((char) _byte);
         }
+        return sb.toString();
     }
 
     public void addDefaultHeader() {
@@ -67,12 +72,7 @@ public class HttpResponse extends HttpMessage {
     }
 
     public byte[] getBytes(){
-        byte[] message;
-        if (this.body.length == 0) {
-            message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes());
-        } else {
-            message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
-        }
+        byte[] message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
 
         LOGGER.info("Respond with: {}", this.getStatusLine());
         // this.printMessage(message);
