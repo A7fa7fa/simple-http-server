@@ -40,7 +40,6 @@ public class HttpResponse extends HttpMessage {
         sb.append(this.statusCode.STATUS_CODE);
         sb.append(SP);
         sb.append(this.statusCode.MESSAGE);
-//        sb.append(CRLF);
         return sb.toString();
     }
 
@@ -58,12 +57,18 @@ public class HttpResponse extends HttpMessage {
         }
     }
 
+    public void addDefaultHeader() {
+        this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
+        this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
+
+    }
+
     public byte[] getBytes(){
         byte[] message;
         if (this.body.length == 0) {
-            message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes());
+            message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes());
         } else {
-        message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
+            message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
         }
 
         LOGGER.info("Respond with: {}", this.getStatusLine());
