@@ -15,7 +15,6 @@ public class HttpResponseHEAD extends HttpResponse {
 
     public void handleRequest(HttpRequest httpRequest, int  gzipMinFileSizeKb) throws IOException, HttpParsingException {
         Path filePath = Reader.getFilePath(this.webroot, httpRequest.getRequestTarget());
-        this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
         String contentType = Reader.probeContentType(filePath);
         if (contentType != null) {
             if (this.clientNotUnderstandsType(httpRequest, contentType)) {
@@ -23,7 +22,7 @@ public class HttpResponseHEAD extends HttpResponse {
             }
             this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, Reader.probeContentType(filePath)));
         }
-        this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
+        this.addDefaultHeader();
         this.addBody(new byte[0]);
         this.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(Reader.getFileSize(filePath))));
     }

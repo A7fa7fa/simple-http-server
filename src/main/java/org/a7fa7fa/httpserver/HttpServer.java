@@ -43,16 +43,8 @@ public class HttpServer {
         final Router routes = Router.getInstance();
         routes.register(MyStaticFunctions.class);
 
-        // Call a registered function
-//        Consumer<HttpRequest> function = routes.getFunction("myStaticFunction");
-//        if (function != null) {
-//            function.accept(new HttpRequest());
-//        } else {
-//            System.out.println("Function not found");
-//        }
-
         try {
-            final ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(), conf.getWebroot(), conf.getGzipMinFileSizeKb());
+            final ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(), conf.getWebroot(), conf.getGzipMinFileSizeKb(), conf.getApiPath());
             serverListenerThread.start();
         } catch (IOException e) {
             e.printStackTrace();

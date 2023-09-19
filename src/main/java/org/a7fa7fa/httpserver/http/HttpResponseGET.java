@@ -18,7 +18,6 @@ public class HttpResponseGET extends HttpResponse {
     @Override
     public void handleRequest(HttpRequest httpRequest, int  gzipMinFileSizeKb) throws IOException, HttpParsingException {
         Path filePath = Reader.getFilePath(this.webroot, httpRequest.getRequestTarget());
-        this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
         String contentType = Reader.probeContentType(filePath);
         if (contentType != null) {
             if (this.clientNotUnderstandsType(httpRequest, contentType)) {
@@ -37,8 +36,7 @@ public class HttpResponseGET extends HttpResponse {
             this.addHeader(new HttpHeader(HeaderName.CONTENT_ENCODING, encodingToken));
             LOGGER.info("Request encoded : {} - size kb before/after {}/{}", encodingToken, sizeBeforeCompressing, body.length);
         }
-        this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
-
+        this.addDefaultHeader();
         this.addBody(body);
         this.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(body.length)));
     }

@@ -13,9 +13,11 @@ public class ServerListenerThread extends Thread {
     private final String webroot;
     private final ServerSocket serverSocket;
     private final int gzipMinFileSizeKb;
+    private final String apiPath;
 
-    public ServerListenerThread(int port, String webroot, int gzipMinFileSizeKb) throws IOException {
+    public ServerListenerThread(int port, String webroot, int gzipMinFileSizeKb, String apiPath) throws IOException {
         this.webroot = webroot;
+        this.apiPath = apiPath;
         this.serverSocket = new ServerSocket(port);
         this.gzipMinFileSizeKb = gzipMinFileSizeKb;
     }
@@ -29,7 +31,7 @@ public class ServerListenerThread extends Thread {
 
                 Socket socket = serverSocket.accept();
                 LOGGER.info("Connection accepted: " + socket.getInetAddress());
-                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket, this.webroot, this.gzipMinFileSizeKb);
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket, this.webroot, this.gzipMinFileSizeKb, this.apiPath);
                 workerThread.start();
 
             }
