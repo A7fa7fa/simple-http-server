@@ -1,6 +1,6 @@
 package org.a7fa7fa.httpserver.router;
 
-import org.a7fa7fa.httpserver.http.HttpMethod;
+import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

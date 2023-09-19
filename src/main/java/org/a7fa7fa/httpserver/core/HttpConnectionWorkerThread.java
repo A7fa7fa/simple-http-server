@@ -1,6 +1,9 @@
 package org.a7fa7fa.httpserver.core;
 
 import org.a7fa7fa.httpserver.http.*;
+import org.a7fa7fa.httpserver.http.tokens.HeaderName;
+import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
+import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
 import org.a7fa7fa.httpserver.router.Router;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

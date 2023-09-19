@@ -1,6 +1,6 @@
 package org.a7fa7fa.httpserver.router;
 
-import org.a7fa7fa.httpserver.http.HttpMethod;
+import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

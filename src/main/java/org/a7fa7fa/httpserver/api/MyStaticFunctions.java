@@ -1,7 +1,7 @@
 package org.a7fa7fa.httpserver.api;
 
 import org.a7fa7fa.httpserver.router.RegisterFunction;
-import org.a7fa7fa.httpserver.http.HttpMethod;
+import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.HttpRequest;
 
 public class MyStaticFunctions {

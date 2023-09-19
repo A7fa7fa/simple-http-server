@@ -1,5 +1,6 @@
 package org.a7fa7fa.httpserver.http;
 
+import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

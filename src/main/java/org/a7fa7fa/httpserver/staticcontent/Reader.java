@@ -1,7 +1,7 @@
 package org.a7fa7fa.httpserver.staticcontent;
 
 import org.a7fa7fa.httpserver.http.HttpParsingException;
-import org.a7fa7fa.httpserver.http.HttpStatusCode;
+import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 
 import java.io.IOException;
 import java.nio.file.Files;
