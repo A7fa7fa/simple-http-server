@@ -120,29 +120,32 @@ public class HttpParser {
         StringBuilder processingDataBuffer = new StringBuilder();
 
         HttpHeader httpHeader = new HttpHeader();
-        boolean fieldNameFound = false;
+        boolean headerNameFound = false;
 
         int _byte;
         while ((_byte = reader.read()) >= 0) {
-            if (_byte == QUOTATION) {
+            boolean startOfQuotation = _byte == QUOTATION;
+            if (startOfQuotation) {
                 processingDataBuffer.append((char) _byte);
                 processingDataBuffer.append(parseQuote(reader));
-            } else if (_byte == CR) {
+                continue;
+            }
+            boolean isStartOfLineBreak = _byte == CR;
+            if (isStartOfLineBreak) {
                 _byte = reader.read();
                 if (_byte != LF) {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
 
-                if (processingDataBuffer.isEmpty()) {
-                    //empty row. separates header from body
+                boolean isEmptyLineHeaderBlockIsOver = processingDataBuffer.isEmpty();
+                if (isEmptyLineHeaderBlockIsOver) {
                     LOGGER.trace("Header processed : {}", httpRequest.getHeaders().toString());
                     return;
                 }
 
-                if (processingDataBuffer.toString().trim().isEmpty()) {
-                    if (fieldNameFound) {
-                        throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
-                    }
+                boolean hasNameWithoutValue = processingDataBuffer.toString().trim().isEmpty() && headerNameFound;
+                if (hasNameWithoutValue) {
+                    throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
 
                 LOGGER.trace("Request line HEADER-VALUE to process : {}", processingDataBuffer.toString());
@@ -151,34 +154,29 @@ public class HttpParser {
                 httpRequest.addHeader(httpHeader);
                 LOGGER.trace(httpHeader.toString());
                 httpHeader = new HttpHeader();
-                fieldNameFound = false;
-
-            } else {
-                boolean isLeadingSpace = processingDataBuffer.isEmpty() && (char) _byte == SP;
-                if (!isLeadingSpace) {
-                    processingDataBuffer.append((char) _byte);
-                }
-                boolean headerNameContainsSpace = !processingDataBuffer.isEmpty() && (char) _byte == SP;
-                if (headerNameContainsSpace && !fieldNameFound) {
-                    throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
-                }
-
-                if (_byte == COLON && !fieldNameFound) {
-
-                    if (processingDataBuffer.length() > 1 && processingDataBuffer.charAt(processingDataBuffer.length() - 2) == SP) {
-                        throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
-                    }
-                    LOGGER.trace("Request line HEADER-FIELD-NAME to process : {}", processingDataBuffer.toString());
-                    httpHeader.setName(processingDataBuffer.toString());
-                    fieldNameFound = true;
-                    processingDataBuffer.delete(0, processingDataBuffer.length());
-                }
+                headerNameFound = false;
+                continue;
             }
 
+            boolean isLeadingSpace = processingDataBuffer.isEmpty() && (char) _byte == SP;
+            if (!isLeadingSpace) {
+                processingDataBuffer.append((char) _byte);
+            }
 
-        }
+            boolean headerNameContainsSpace = !processingDataBuffer.isEmpty() && (char) _byte == SP && !headerNameFound;
+            if (headerNameContainsSpace) {
+                throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+            }
 
+            boolean endOfHeaderNameFound = _byte == COLON && !headerNameFound;
+            if (endOfHeaderNameFound) {
+                LOGGER.trace("Request line HEADER-FIELD-NAME to process : {}", processingDataBuffer.toString());
+                httpHeader.setName(processingDataBuffer.toString());
+                headerNameFound = true;
+                processingDataBuffer.delete(0, processingDataBuffer.length());
+            }
         }
+    }
 
 
     private void parseBody(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {

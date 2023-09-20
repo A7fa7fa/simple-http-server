@@ -136,10 +136,20 @@ class HttpParserTest {
     }
 
     @Test
-    void parseSpaceBeforeColonHeader() {
+    void parseSpaceBeforeColonHeaderTestCase() {
         HttpRequest httpRequest = null;
         try {
             httpRequest = httpParser.parseHttpRequest(generateSpaceBeforeColonHeaderTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+    @Test
+    void parseSpaceInHeaderNameTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateSpaceInHeaderNameTestCase());
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -330,6 +340,15 @@ class HttpParserTest {
     private InputStream generateSpaceBeforeColonHeaderTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Host : localhost:8080\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generateSpaceInHeaderNameTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Host: localhost:8080\r\n" +
+                "Name with space: localhost:8080\r\n" +
                 "\r\n";
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
         return inputStream;
