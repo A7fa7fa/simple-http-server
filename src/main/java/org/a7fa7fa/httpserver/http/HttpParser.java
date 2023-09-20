@@ -31,6 +31,7 @@ public class HttpParser {
         try {
             this.parseRequestLine(reader, httpRequest);
             this.parseHeaders(reader, httpRequest);
+            this.validateHeaders(httpRequest);
             this.parseBody(reader, httpRequest);
         } catch (IOException e) {
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR);
@@ -38,6 +39,13 @@ public class HttpParser {
 
         return httpRequest;
 
+    }
+
+    private void validateHeaders(HttpRequest httpRequest) throws HttpParsingException {
+        HttpHeader mandatoryHeader = httpRequest.getHeader(HeaderName.HOST);
+        if (mandatoryHeader == null) {
+            throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
     }
 
     private void parseRequestLine(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {

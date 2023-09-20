@@ -131,7 +131,7 @@ class HttpParserTest {
             assertNotNull(httpRequest);
             assertEquals(httpRequest.getBestCompatibleHttpVersion(), HttpVersion.HTTP_1_1);
         } catch (HttpParsingException e) {
-            fail();
+            fail(e);
         }
     }
 
@@ -320,6 +320,7 @@ class HttpParserTest {
 
     private InputStream generateSupportedHttpVersionFormat() {
         String rawData = "GET / HTTP/1.2\r\n" +
+                "Host: localhost:8080\r\n" +
                 "\r\n";
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
         return inputStream;
@@ -368,6 +369,7 @@ class HttpParserTest {
     private InputStream generateNoContentLengthHeaderWithTransferEncodingTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Transfer-Encoding: chunked\r\n" +
+                "Host: postman\r\n" +
                 "\r\n";
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
         return inputStream;
@@ -377,6 +379,7 @@ class HttpParserTest {
     private InputStream generateValidBodyTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Content-Length: 14\r\n" +
+                "Host: localhost\r\n" +
                 "\r\n" +
                 "body1\r\n" +
                 "body2\r\n";

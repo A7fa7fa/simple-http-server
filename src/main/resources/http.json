@@ -1,6 +1,6 @@
 {
   "port": 8080,
-  "webroot": "..",
+  "webroot": "C:\\Users\\JMD1FE\\Desktop\\testwebroot",
   "gzipMinFileSizeKb": 5,
   "logLevel": "trace",
   "apiPath": "/api"

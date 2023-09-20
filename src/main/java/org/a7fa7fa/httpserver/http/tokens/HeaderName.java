@@ -8,6 +8,7 @@ public enum HeaderName {
     ACCEPT_ENCODING("Accept-Encoding"),
     TRANSFER_ENCODING("Transfer-Encoding"),
     DATE("Date"),
+    HOST("Host"),
     ACCEPT("Accept");
 
     private final String fieldNameLowerCase;
