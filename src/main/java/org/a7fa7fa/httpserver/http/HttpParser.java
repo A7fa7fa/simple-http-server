@@ -139,7 +139,7 @@ public class HttpParser {
 
                 boolean isEmptyLineHeaderBlockIsOver = processingDataBuffer.isEmpty();
                 if (isEmptyLineHeaderBlockIsOver) {
-                    LOGGER.trace("Header processed : {}", httpRequest.getHeaders().toString());
+                    LOGGER.trace("Header processed : {}", httpRequest.getHeaders().size());
                     return;
                 }
 
@@ -182,11 +182,15 @@ public class HttpParser {
     private void parseBody(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {
         StringBuilder processingDataBuffer = new StringBuilder();
         int contentLength = 0;
-        HttpHeader header = httpRequest.getHeader(HeaderName.CONTENT_LENGTH);
-        if (header != null){
-            contentLength = Integer.parseInt(header.getValue());
+        HttpHeader contentLengthHeader = httpRequest.getHeader(HeaderName.CONTENT_LENGTH);
+        HttpHeader transferEncodingHeader = httpRequest.getHeader(HeaderName.TRANSFER_ENCODING);
+        if (contentLengthHeader != null && transferEncodingHeader != null){
+            throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
-        if (header == null && httpRequest.getHeader(HeaderName.TRANSFER_ENCODING) != null) {
+        if (contentLengthHeader != null){
+            contentLength = Integer.parseInt(contentLengthHeader.getValue());
+        }
+        if (contentLengthHeader == null && transferEncodingHeader != null) {
             // If a message is received with both a Transfer-Encoding and a Content-Length header field
             // the Transfer-Encoding overrides the Content-Length.
             // Such a message might indicate an attempt to

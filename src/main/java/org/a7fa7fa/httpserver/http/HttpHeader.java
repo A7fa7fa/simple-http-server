@@ -61,7 +61,7 @@ public class HttpHeader {
     }
 
     public String toString(){
-        return "Field: " +this.originalFieldName + " Value: " + this.originalFieldValue;
+        return this.toStandardFormat();
     }
 
     public String toStandardFormat() {

@@ -246,6 +246,17 @@ class HttpParserTest {
         }
     }
 
+    @Test
+    void parseBodyNoContentLengthNoTransferEncodingTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderandTransferEncodingTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+
     private InputStream generateValidTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Host: localhost:8080\r\n" +
@@ -387,6 +398,16 @@ class HttpParserTest {
     }
     private InputStream generateNoContentLengthHeaderWithTransferEncodingTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
+                "Transfer-Encoding: chunked\r\n" +
+                "Host: postman\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generateNoContentLengthHeaderandTransferEncodingTestCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Content-Length: 0\r\n" +
                 "Transfer-Encoding: chunked\r\n" +
                 "Host: postman\r\n" +
                 "\r\n";

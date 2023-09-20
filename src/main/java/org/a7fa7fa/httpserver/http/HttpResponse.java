@@ -68,7 +68,7 @@ public class HttpResponse extends HttpMessage {
     public void addDefaultHeader() {
         this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
         this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
-
+        this.addHeader(new HttpHeader(HeaderName.HOST, "localhost"));
     }
 
     public byte[] getBytes(){
