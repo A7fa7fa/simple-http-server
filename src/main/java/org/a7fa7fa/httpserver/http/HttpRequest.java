@@ -84,4 +84,13 @@ public class HttpRequest extends HttpMessage {
         return method + " " + requestTarget + " " + originalHttpVersion;
     }
 
+    public boolean clientNotUnderstandsType(String contentType) {
+        HttpHeader header = this.getHeader(HeaderName.ACCEPT);
+        if (header == null) {
+            return false;
+        }
+        return !(header.getValue().contains(contentType) || header.getValue().contains("*/*"));
+    }
+
+
 }

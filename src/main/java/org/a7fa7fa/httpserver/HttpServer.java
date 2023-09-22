@@ -1,9 +1,10 @@
 package org.a7fa7fa.httpserver;
 
+import org.a7fa7fa.httpserver.controller.StaticSite;
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.config.ConfigurationManager;
-import org.a7fa7fa.httpserver.api.MyStaticFunctions;
-import org.a7fa7fa.httpserver.router.Router;
+import org.a7fa7fa.httpserver.controller.DefaultApiEndpoint;
+import org.a7fa7fa.httpserver.core.Router;
 import org.a7fa7fa.httpserver.core.ServerListenerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,11 @@ public class HttpServer {
         rootLogger.setLevel(conf.getLoglevel());
 
         try {
-            final Router routes = Router.getInstance();
-            routes.register(MyStaticFunctions.class);
+            final Router routes = Router.getInstance(conf);
+            routes.register(StaticSite.class);
+            routes.register(DefaultApiEndpoint.class);
 
-            final ServerListenerThread serverListenerThread = new ServerListenerThread(conf.getPort(), conf.getWebroot(), conf.getGzipMinFileSizeKb(), conf.getApiPath());
+            final ServerListenerThread serverListenerThread = new ServerListenerThread(conf);
             serverListenerThread.start();
         } catch (Exception e) {
             e.printStackTrace();

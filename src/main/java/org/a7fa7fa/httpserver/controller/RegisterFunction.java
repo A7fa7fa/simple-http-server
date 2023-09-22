@@ -1,5 +1,6 @@
-package org.a7fa7fa.httpserver.router;
+package org.a7fa7fa.httpserver.controller;
 
+import org.a7fa7fa.httpserver.controller.ControllerType;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 
 import java.lang.annotation.ElementType;
@@ -12,4 +13,5 @@ import java.lang.annotation.Target;
 public @interface RegisterFunction {
     HttpMethod targetMethod();
     String target();
+    ControllerType controllerType() default ControllerType.API;
 }

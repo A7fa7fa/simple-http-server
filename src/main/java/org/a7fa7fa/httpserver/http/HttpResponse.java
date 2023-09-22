@@ -21,15 +21,18 @@ public class HttpResponse extends HttpMessage {
     private final HttpVersion httpVersion;
 
     private String headers = "";
-    private byte[] body;
+    private byte[] body = new byte[0];
 
     private final String CRLF = "\r\n";
 
-    public HttpResponse(HttpVersion httpVersion, HttpStatusCode statusCode){
-        this.httpVersion = httpVersion;
-        this.statusCode = statusCode;
-        this.body = new byte[0];
+    public HttpResponse(HttpVersion httpVersion){
+    this.httpVersion = httpVersion;
+}
+
+    public String toString() {
+        return this.statusCode.toString();
     }
+
 
     public void setStatusCode(HttpStatusCode statusCode) {
         this.statusCode = statusCode;
@@ -83,15 +86,11 @@ public class HttpResponse extends HttpMessage {
         throw new RuntimeException("Not implemented");
     }
 
-    public boolean clientNotUnderstandsType(HttpRequest httpRequest, String contentType) {
-        HttpHeader header = httpRequest.getHeader(HeaderName.ACCEPT);
-        if (header == null) {
-            return false;
-        }
-        return !(header.getValue().contains(contentType) || header.getValue().contains("*/*"));
-    }
-
     public void pipe(OutputStream outputStream) throws IOException {
+        if (this.statusCode == null) {
+            LOGGER.warn("Status code not set");
+            throw new RuntimeException("Status code not set");
+        }
         outputStream.write(this.getBytes());
     }
 
