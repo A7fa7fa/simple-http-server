@@ -43,8 +43,13 @@ public class HttpConnectionWorkerThread extends Thread {
             HttpResponse response = new HttpResponse(request.getBestCompatibleHttpVersion());
 
             Router router = Router.getInstance(configuration);
-            router.invoke(request, response);
-            response.pipe(outputStream);
+            ResponseProcessor responseProcessor = new ResponseProcessor(response, outputStream);
+            Context context = new Context(request, this.configuration, responseProcessor);
+            router.invoke(context);
+            byte[] responseMessage = response.buildCompleteMessage();
+            if (!responseProcessor.isAlreadySend()) {
+                response.pipe(outputStream, responseMessage);
+            }
 
 
         } catch (RuntimeException e) {
@@ -58,11 +63,11 @@ public class HttpConnectionWorkerThread extends Thread {
             if (outputStream != null) {
                 HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
                 response.setStatusCode(code);
-                response.addDefaultHeader();
+                response.setDefaultHeader();
                 response.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, "0"));
                 LOGGER.debug("Error response set : {}", response.getStatusLine());
                 try {
-                    outputStream.write(response.getBytes());
+                    outputStream.write(response.buildCompleteMessage());
                 } catch (IOException ex) {}
             }
 
@@ -71,11 +76,11 @@ public class HttpConnectionWorkerThread extends Thread {
             if (outputStream != null) {
                 HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
                 response.setStatusCode(e.getErrorCode());
-                response.addDefaultHeader();
+                response.setDefaultHeader();
                 response.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, "0"));
                 LOGGER.debug("Error response set : {}", response.getStatusLine());
                 try {
-                    outputStream.write(response.getBytes());
+                    outputStream.write(response.buildCompleteMessage());
                 } catch (IOException ex) {}
             }
         } catch (IOException e) {

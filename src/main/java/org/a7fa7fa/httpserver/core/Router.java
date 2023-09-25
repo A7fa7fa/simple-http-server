@@ -130,14 +130,14 @@ public class Router {
         return routes.get(functionName);
     }
 
-    public void invoke(HttpRequest httpRequest, HttpResponse httpResponse) throws HttpParsingException {
-        ControllerType endpoint = ControllerType.getControllerTypeOfEndpoint(httpRequest, this.configuration.getApiPath());
+    public void invoke(Context context) throws HttpParsingException {
+        ControllerType endpoint = ControllerType.getControllerTypeOfEndpoint(context.getHttpRequest(), this.configuration.getApiPath());
 
-        String functionName = this.generateName(httpRequest.getMethod(), httpRequest.getRequestTarget(), endpoint);
+        String functionName = this.generateName(context.getHttpRequest().getMethod(), context.getHttpRequest().getRequestTarget(), endpoint);
         LOGGER.debug("Requesting function... : {}", functionName);
         Consumer<Context> function = this.getFunction(functionName);
         if (function != null) {
-            function.accept(new Context(httpRequest, httpResponse, this.configuration));
+            function.accept(context);
         } else {
             LOGGER.warn("Function not found");
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_404_NOT_FOUND);

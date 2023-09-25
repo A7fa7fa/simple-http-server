@@ -3,11 +3,13 @@ package org.a7fa7fa.httpserver.http;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
+import org.a7fa7fa.httpserver.parser.ByteProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -56,26 +58,23 @@ public class HttpResponse extends HttpMessage {
     public void addHeader(HttpHeader httpHeader){
         this.headers += httpHeader.toStandardFormat() + CRLF;
     }
+
     public String getHeaders(){
         return this.headers;
     }
 
-    public static String byteToString(byte[] message) {
-        StringBuilder sb = new StringBuilder();
-        for (byte _byte: message) {
-            sb.append((char) _byte);
-        }
-        return sb.toString();
-    }
-
-    public void addDefaultHeader() {
+    public void setDefaultHeader() {
         this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
         this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
         this.addHeader(new HttpHeader(HeaderName.HOST, "localhost"));
     }
 
-    public byte[] getBytes(){
-        byte[] message = concatResponse(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
+    public byte[] buildStatusWithHeaders() {
+        return ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes());
+    }
+
+    public byte[] buildCompleteMessage(){
+        byte[] message = ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.headers.getBytes(), this.CRLF.getBytes(), this.body);
 
         LOGGER.info("Respond with: {}", this.getStatusLine());
         // this.printMessage(message);
@@ -86,12 +85,12 @@ public class HttpResponse extends HttpMessage {
         throw new RuntimeException("Not implemented");
     }
 
-    public void pipe(OutputStream outputStream) throws IOException {
+    public void pipe(OutputStream outputStream, byte[] data) throws IOException {
         if (this.statusCode == null) {
             LOGGER.warn("Status code not set");
             throw new RuntimeException("Status code not set");
         }
-        outputStream.write(this.getBytes());
+        outputStream.write(data);
     }
 
     String getServerTime() {
@@ -102,27 +101,14 @@ public class HttpResponse extends HttpMessage {
         return dateFormat.format(calendar.getTime());
     }
 
-
-    public static byte[] concatResponse(byte[]...arrays)
-    {
-        // Determine the length of the result array
-        int totalLength = 0;
-        for (int i = 0; i < arrays.length; i++)
-        {
-            totalLength += arrays[i].length;
-        }
-
-        // create the result array
-        byte[] result = new byte[totalLength];
-
-        // copy the source arrays into the result array
-        int currentIndex = 0;
-        for (int i = 0; i < arrays.length; i++)
-        {
-            System.arraycopy(arrays[i], 0, result, currentIndex, arrays[i].length);
-            currentIndex += arrays[i].length;
-        }
-
-        return result;
+    public byte[] createChunk(byte[] data) {
+        String chunkSize = Integer.toHexString(data.length);
+        return ByteProcessor.combine(chunkSize.getBytes(StandardCharsets.US_ASCII), this.CRLF.getBytes(StandardCharsets.US_ASCII), data, this.CRLF.getBytes(StandardCharsets.US_ASCII));
     }
+
+    public byte[] createEndStreamChunk() {
+        return this.createChunk(new byte[0]);
+    }
+
+
 }

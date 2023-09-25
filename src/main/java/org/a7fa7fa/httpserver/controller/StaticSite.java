@@ -13,22 +13,23 @@ public class StaticSite implements Controller {
     private final static Logger LOGGER = LoggerFactory.getLogger(StaticSite.class);
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "*", controllerType = ControllerType.STATIC)
-    public static void getStaticSite(Context context) throws IOException, HttpParsingException {
-        String requestTarget = context.getRequestTarget();
-        byte[] fileContent = context.readStaticFile(requestTarget);
-        context.addBodyToResponse(fileContent);
-        context.addDefaultResponseHeader();
+    public static void getStaticSite(Context context) throws HttpParsingException, IOException {
+        byte[] fileContent = context.readTargetFromFile();
+        context.setResponse(fileContent);
+        context.setDefaultResponseHeader();
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
+        context.send();
         LOGGER.info("Site loaded : " + context.toString());
     }
 
     @RegisterFunction(targetMethod = HttpMethod.HEAD, target = "*", controllerType = ControllerType.STATIC)
-    public static void headStaticSite(Context context) throws IOException, HttpParsingException {
-        String requestTarget = context.getRequestTarget();
-        byte[] fileContent = context.readStaticFile(requestTarget);
-        context.addBodyToResponse(new byte[0]);
-        context.addDefaultResponseHeader();
+    public static void headStaticSite(Context context) throws HttpParsingException, IOException {
+        byte[] fileContent = context.readTargetFromFile();
+        context.setResponse(fileContent);
+        context.setDefaultResponseHeader();
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
+        context.sendStatusAndHeader();
+
         LOGGER.info("Site loaded : " + context.toString());
     }
 }

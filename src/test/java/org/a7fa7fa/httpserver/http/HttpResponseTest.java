@@ -3,6 +3,7 @@ package org.a7fa7fa.httpserver.http;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
+import org.a7fa7fa.httpserver.parser.ByteProcessor;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -42,7 +43,7 @@ class HttpResponseTest {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         assertNotNull(response);
-        response.addDefaultHeader();
+        response.setDefaultHeader();
         assertTrue(response.getHeaders().contains("server"));
         assertTrue(response.getHeaders().contains("date"));
     }
@@ -64,7 +65,7 @@ class HttpResponseTest {
                 "server: servervalue\r\n" +
                 "\r\n" +
                 "{\"key\": \"value\"}";
-        assertEquals(HttpResponse.byteToString(response.getBytes()), validMessage);
+        assertEquals(ByteProcessor.byteToString(response.buildCompleteMessage()), validMessage);
     }
     @Test
     void shouldBuildValidResponseWithoutBodyMessage() {
@@ -80,7 +81,7 @@ class HttpResponseTest {
                 "accept: 45\r\n" +
                 "server: servervalue\r\n" +
                 "\r\n";
-        assertEquals(HttpResponse.byteToString(response.getBytes()), validMessage);
+        assertEquals(ByteProcessor.byteToString(response.buildCompleteMessage()), validMessage);
     }
     @Test
     void clientUnderstandsTypeEveryType() {
@@ -101,17 +102,6 @@ class HttpResponseTest {
         assertNotNull(request);
         request.addHeader(new HttpHeader(HeaderName.ACCEPT, "txt"));
         assertTrue(request.clientNotUnderstandsType("not txt"));
-    }
-
-    @Test
-    void concatBytesTest() {
-        String firstLine = "this is a line";
-        String secondLine = "this is another line";
-
-        byte[] concatenated = HttpResponse.concatResponse(firstLine.getBytes(StandardCharsets.US_ASCII), secondLine.getBytes(StandardCharsets.UTF_8));
-
-        HttpResponse.byteToString(concatenated);
-        assertEquals(HttpResponse.byteToString(concatenated), firstLine + secondLine);
     }
 
 }

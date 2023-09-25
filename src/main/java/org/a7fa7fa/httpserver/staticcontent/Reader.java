@@ -48,22 +48,10 @@ public class Reader {
     }
 
     public static byte[] readFile(Path filePath) throws IOException {
-        byte[] data = Files.readAllBytes(filePath);
-        return data;
+        return Files.readAllBytes(filePath);
     }
 
-    public static BufferedReader createBufferReader(String filePath) throws IOException {
-        return new BufferedReader(new FileReader(filePath));
-    }
-
-    public static byte[] compress(byte[] file) throws IOException {
-
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
-        zipStream.write(file);
-        zipStream.close();
-        byte[] byteBody = byteStream.toByteArray();
-        return byteBody;
-
+    public static BufferedReader readBufferedFile(Path filePath) throws IOException {
+        return Files.newBufferedReader(filePath);
     }
 }
