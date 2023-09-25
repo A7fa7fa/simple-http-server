@@ -1,19 +1,14 @@
 package org.a7fa7fa.httpserver.staticcontent;
 
-import org.a7fa7fa.httpserver.http.Context;
 import org.a7fa7fa.httpserver.http.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.zip.GZIPOutputStream;
-import java.io.ByteArrayOutputStream;
 
 public class Reader {
     private final static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -51,7 +46,7 @@ public class Reader {
         return Files.readAllBytes(filePath);
     }
 
-    public static BufferedReader readBufferedFile(Path filePath) throws IOException {
-        return Files.newBufferedReader(filePath);
+    public static FileInputStream readStreamFile(String filePath) throws IOException {
+        return new FileInputStream(filePath);
     }
 }

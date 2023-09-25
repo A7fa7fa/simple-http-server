@@ -7,7 +7,9 @@ import org.a7fa7fa.httpserver.staticcontent.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 
@@ -101,6 +103,20 @@ public class ResponseProcessor {
     public void endStream() throws IOException {
         byte[] chunk = this.httpResponse.createEndStreamChunk();
         this.httpResponse.pipe(outputStream, chunk);
+    }
+
+    public void streamFromStream(InputStream inputStream, int chunckSize) throws IOException {
+        byte[] out;
+        try {
+            while ((out = inputStream.readNBytes( chunckSize)).length > 0) {
+                this.sendChunk(out);
+            }
+        } finally {
+            this.endStream();
+            try {
+                inputStream.close();
+            } catch (IOException e) {}
+        }
     }
 
 }

@@ -10,7 +10,7 @@ import org.a7fa7fa.httpserver.staticcontent.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Random;
 
@@ -33,8 +33,8 @@ public class DefaultApiEndpoint implements Controller {
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.sendStatusAndHeader();
-        BufferedReader br = Reader.readBufferedFile(Reader.getFilePath("","src/main/resources/public/index.html"));
-        context.streamData(br);
+        FileInputStream fileInputStream = Reader.readStreamFile("src/main/resources/public/index.html");
+        context.streamData(fileInputStream);
     }
 
     private static String generateRandomString(int targetStringLength) {

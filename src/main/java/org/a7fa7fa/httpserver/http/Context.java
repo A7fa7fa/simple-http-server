@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Context {
     private final static Logger LOGGER = LoggerFactory.getLogger(Context.class);
@@ -60,37 +63,13 @@ public class Context {
     }
 
     public void streamData(byte[] data) throws IOException {
-        this.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
 
         ByteArrayInputStream inBuffer = new ByteArrayInputStream(data);
-
-        byte[] out;
-        try {
-            while ((out = inBuffer.readNBytes( 100)).length > 0) {
-                this.responseProcessor.sendChunk(out);
-            }
-        } finally {
-            this.responseProcessor.endStream();
-            try {
-                inBuffer.close();
-            } catch (IOException e) {}
-        }
+        this.responseProcessor.streamFromStream(inBuffer, 20);
     }
 
-    public void streamData(BufferedReader data) throws IOException {
-        this.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
-
-        try {
-            for (String line = data.readLine(); line != null; line = data.readLine()) {
-                this.responseProcessor.sendChunk(line.getBytes());
-            }
-        } finally {
-            this.responseProcessor.endStream();
-            try {
-                data.close();
-            } catch (IOException e) {}
-        }
+    public void streamData(FileInputStream inputStream) throws IOException {
+        this.responseProcessor.streamFromStream(inputStream, 1024*10);
     }
-
 }
 
