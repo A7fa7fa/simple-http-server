@@ -18,6 +18,8 @@ RUN  apk update \
   && apk add --update coreutils && rm -rf /var/cache/apk/*   \
   && apk add --update openjdk17 tzdata curl unzip bash \
   && apk add --no-cache nss \
+  # add mime type information /etc/mime.types
+  && apk add mailcap \
   && rm -rf /var/cache/apk/*
 
 RUN java -version

@@ -49,6 +49,7 @@ public class ResponseProcessor {
                 throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_415_UNSUPPORTED_MEDIA_TYPE);
             }
         }
+        LOGGER.debug("Content type : " + contentType);
         this.contentType = contentType;
     }
 
@@ -61,13 +62,17 @@ public class ResponseProcessor {
         String requestTarget = httpRequest.getRequestTarget();
         Path targetFilePath = Reader.getFilePath(webroot, requestTarget);
         this.setContentType(targetFilePath, httpRequest);
+        LOGGER.debug("Target file path : " + targetFilePath);
         return Reader.readFile(targetFilePath);
     }
 
 
     void prepareResponse(byte[] fileContent, HttpRequest httpRequest, int gzipMinFileSizeKb) throws IOException, HttpParsingException {
 
-        this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, this.contentType));
+        if (this.contentType != null) {
+            this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, this.contentType));
+        }
+
         // TODO You should not allow your web server to compress image files or PDF files
         // these files are already compressed and by compressing them again you’re not only wasting CPU resources but you can actually make the resulting file larger by compressing them again
         String encodingToken = "gzip";
