@@ -63,13 +63,28 @@ public class Context {
     }
 
     public void streamData(byte[] data) throws IOException {
+        this.streamData(data, 20);
+    }
+
+    public void sendAsChunk(byte[] data) throws IOException {
+        this.responseProcessor.sendChunk(data);
+    }
+
+    public void endStream() throws IOException {
+        this.responseProcessor.endStream();
+    }
+
+    public void streamData(byte[] data, int chunkSize) throws IOException {
 
         ByteArrayInputStream inBuffer = new ByteArrayInputStream(data);
-        this.responseProcessor.streamFromStream(inBuffer, 20);
+        this.responseProcessor.streamFromStream(inBuffer, chunkSize);
     }
 
     public void streamData(FileInputStream inputStream) throws IOException {
-        this.responseProcessor.streamFromStream(inputStream, 1024*10);
+        this.streamData(inputStream, 1024*10);
+    }
+    public void streamData(FileInputStream inputStream, int chunkSize) throws IOException {
+        this.responseProcessor.streamFromStream(inputStream, chunkSize);
     }
 }
 

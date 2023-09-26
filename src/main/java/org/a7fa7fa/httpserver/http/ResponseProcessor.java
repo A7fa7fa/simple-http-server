@@ -105,10 +105,10 @@ public class ResponseProcessor {
         this.httpResponse.pipe(outputStream, chunk);
     }
 
-    public void streamFromStream(InputStream inputStream, int chunckSize) throws IOException {
+    public void streamFromStream(InputStream inputStream, int chunkSize) throws IOException {
         byte[] out;
         try {
-            while ((out = inputStream.readNBytes( chunckSize)).length > 0) {
+            while ((out = inputStream.readNBytes( chunkSize)).length > 0) {
                 this.sendChunk(out);
             }
         } finally {
