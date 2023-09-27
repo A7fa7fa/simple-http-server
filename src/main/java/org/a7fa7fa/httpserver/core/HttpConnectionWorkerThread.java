@@ -48,7 +48,7 @@ public class HttpConnectionWorkerThread extends Thread {
             Context context = new Context(request, this.configuration, responseProcessor);
             router.invoke(context);
             byte[] responseMessage = response.buildCompleteMessage();
-            if (!responseProcessor.isAlreadySend()) {
+            if (!response.isAlreadySend()) {
                 response.pipe(outputStream, responseMessage);
             }
 

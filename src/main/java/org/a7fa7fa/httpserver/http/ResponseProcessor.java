@@ -16,10 +16,6 @@ import java.nio.file.Path;
 public class ResponseProcessor {
     private final static Logger LOGGER = LoggerFactory.getLogger(ResponseProcessor.class);
 
-    private boolean alreadySend = false;
-
-    private String contentType;
-
     private final HttpResponse httpResponse;
     private final OutputStream outputStream;
 
@@ -33,13 +29,6 @@ public class ResponseProcessor {
         return this.httpResponse;
     }
 
-    public boolean isAlreadySend() {
-        return alreadySend;
-    }
-
-    void setAlreadySend(boolean alreadySend) {
-        this.alreadySend = alreadySend;
-    }
 
     private void setContentType(Path filePath, HttpRequest httpRequest) throws HttpParsingException {
         String contentType = Reader.probeContentType(filePath);
@@ -50,7 +39,7 @@ public class ResponseProcessor {
             }
         }
         LOGGER.debug("Content type : " + contentType);
-        this.contentType = contentType;
+        this.httpResponse.setContentType(contentType);
     }
 
     byte[] readDataFromAbsoluteFile(HttpRequest httpRequest, String fileLocation) throws HttpParsingException, IOException {
@@ -69,8 +58,8 @@ public class ResponseProcessor {
 
     void prepareResponse(byte[] fileContent, HttpRequest httpRequest, int gzipMinFileSizeKb) throws IOException, HttpParsingException {
 
-        if (this.contentType != null) {
-            this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, this.contentType));
+        if (this.httpResponse.getContentType() != null) {
+            this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, this.httpResponse.getContentType()));
         }
 
         // TODO You should not allow your web server to compress image files or PDF files
@@ -93,11 +82,9 @@ public class ResponseProcessor {
 
     void sendFullMessage() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildCompleteMessage());
-        this.setAlreadySend(true);
     }
     void sendWithoutBody() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildStatusWithHeaders());
-        this.setAlreadySend(true);
     }
 
     void sendChunk(byte[] data) throws ClientDisconnectException {
