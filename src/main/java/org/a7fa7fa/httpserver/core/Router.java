@@ -52,7 +52,7 @@ public class Router {
             try {
                 method.invoke(null, context);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.debug("Some error happened while invoking function.");
+                LOGGER.debug("Some error happened while invoking function : " + e.getCause().getMessage());
                 throw new RuntimeException(e.getCause());
             }
         };

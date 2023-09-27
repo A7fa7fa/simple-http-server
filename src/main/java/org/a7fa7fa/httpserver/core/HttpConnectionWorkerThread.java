@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class HttpConnectionWorkerThread extends Thread {
     private final static Logger LOGGER = LoggerFactory.getLogger(HttpConnectionWorkerThread.class);
@@ -53,11 +54,15 @@ public class HttpConnectionWorkerThread extends Thread {
 
 
         } catch (RuntimeException e) {
-            LOGGER.error("Runtime caught.");
+            LOGGER.debug("Runtime caught." + e.getCause());
             Throwable originalException = e.getCause();
             HttpStatusCode code = HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR;
             if (originalException instanceof HttpParsingException) {
                 code = ((HttpParsingException) originalException).getErrorCode();
+            }
+            if (originalException instanceof SocketException || originalException instanceof ClientDisconnectException) {
+                LOGGER.debug("Client disconnected so just return.");
+                return;
             }
 
             if (outputStream != null) {
@@ -65,7 +70,7 @@ public class HttpConnectionWorkerThread extends Thread {
                 response.setStatusCode(code);
                 response.setDefaultHeader();
                 response.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, "0"));
-                LOGGER.debug("Error response set : {}", response.getStatusLine());
+                LOGGER.error("Error response set : {}", response.getStatusLine());
                 try {
                     outputStream.write(response.buildCompleteMessage());
                 } catch (IOException ex) {}
@@ -83,7 +88,7 @@ public class HttpConnectionWorkerThread extends Thread {
                     outputStream.write(response.buildCompleteMessage());
                 } catch (IOException ex) {}
             }
-        } catch (IOException e) {
+        } catch (IOException | ClientDisconnectException e) {
             LOGGER.error("Problem with reading from file", e);
         } finally {
             if (inputStream != null) {

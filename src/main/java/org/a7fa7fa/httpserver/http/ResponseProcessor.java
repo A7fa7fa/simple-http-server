@@ -87,30 +87,30 @@ public class ResponseProcessor {
         this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(fileContent.length)));
     }
 
-    private void pipe(byte[] data) throws IOException {
+    private void pipe(byte[] data) throws ClientDisconnectException {
         this.httpResponse.pipe(this.outputStream, data);
     }
 
-    void sendFullMessage() throws IOException {
+    void sendFullMessage() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildCompleteMessage());
         this.setAlreadySend(true);
     }
-    void sendWithoutBody() throws IOException {
+    void sendWithoutBody() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildStatusWithHeaders());
         this.setAlreadySend(true);
     }
 
-    void sendChunk(byte[] data) throws IOException {
+    void sendChunk(byte[] data) throws ClientDisconnectException {
         byte[] chunk = this.httpResponse.createChunk(data);
         this.httpResponse.pipe(outputStream, chunk);
     }
 
-    public void endStream() throws IOException {
+    public void endStream() throws ClientDisconnectException {
         byte[] chunk = this.httpResponse.createEndStreamChunk();
         this.httpResponse.pipe(outputStream, chunk);
     }
 
-    public void streamFromStream(InputStream inputStream, int chunkSize) throws IOException {
+    public void streamFromStream(InputStream inputStream, int chunkSize) throws ClientDisconnectException, IOException {
         byte[] out;
         try {
             while ((out = inputStream.readNBytes( chunkSize)).length > 0) {

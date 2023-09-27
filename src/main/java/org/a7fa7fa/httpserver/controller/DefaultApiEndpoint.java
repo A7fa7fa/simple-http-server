@@ -1,5 +1,6 @@
 package org.a7fa7fa.httpserver.controller;
 
+import org.a7fa7fa.httpserver.http.ClientDisconnectException;
 import org.a7fa7fa.httpserver.http.Context;
 import org.a7fa7fa.httpserver.http.HttpHeader;
 import org.a7fa7fa.httpserver.http.HttpParsingException;
@@ -18,17 +19,17 @@ public class DefaultApiEndpoint implements Controller {
     private final static Logger LOGGER = LoggerFactory.getLogger(DefaultApiEndpoint.class);
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/config")
-    public static void myStaticFunction(Context context) throws HttpParsingException, IOException {
+    public static void myStaticFunction(Context context) throws HttpParsingException, IOException, ClientDisconnectException {
         byte[] fileContent = context.readContentFromFile("src/main/resources/http.json");
         context.setResponse(fileContent);
         context.setDefaultResponseHeader();
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.send();
-        LOGGER.info("myStaticFunction called with HttpRequest: " + context);
+        LOGGER.debug("myStaticFunction called with HttpRequest: " + context);
     }
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/stream-file")
-    public static void anotherStaticFunction(Context context) throws IOException, HttpParsingException {
+    public static void anotherStaticFunction(Context context) throws IOException, ClientDisconnectException {
         context.setDefaultResponseHeader();
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
@@ -57,27 +58,27 @@ public class DefaultApiEndpoint implements Controller {
     }
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/stream")
-    public static void yetAnotherStaticFunction(Context context) throws HttpParsingException, IOException, InterruptedException {
+    public static void yetAnotherStaticFunction(Context context) throws ClientDisconnectException, IOException {
 
         context.setDefaultResponseHeader();
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.sendStatusAndHeader();
-        LOGGER.info("Body send");
+        LOGGER.debug("Body send");
 
         context.streamData(generateRandomString(80).getBytes());
 
-        LOGGER.info("yetAnotherStaticFunction called with HttpRequest: " + context);
+        LOGGER.debug("yetAnotherStaticFunction called with HttpRequest: " + context);
     }
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/stream-random")
-    public static void randomStream(Context context) throws HttpParsingException, IOException, InterruptedException {
+    public static void randomStream(Context context) throws InterruptedException, ClientDisconnectException {
 
         context.setDefaultResponseHeader();
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.sendStatusAndHeader();
-        LOGGER.info("Body send");
+        LOGGER.debug("Body send");
 
         int runForSec = 60;
 
@@ -90,7 +91,7 @@ public class DefaultApiEndpoint implements Controller {
 
         context.endStream();
 
-        LOGGER.info("yetAnotherStaticFunction called with HttpRequest: " + context);
+        LOGGER.debug("yetAnotherStaticFunction called with HttpRequest: " + context);
     }
 
 }

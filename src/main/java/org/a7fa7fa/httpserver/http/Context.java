@@ -54,36 +54,36 @@ public class Context {
         this.responseProcessor.getResponse().setDefaultHeader();
     }
 
-    public void send() throws IOException {
+    public void send() throws ClientDisconnectException {
         this.responseProcessor.sendFullMessage();
     }
 
-    public void sendStatusAndHeader() throws IOException {
+    public void sendStatusAndHeader() throws ClientDisconnectException {
         this.responseProcessor.sendWithoutBody();
     }
 
-    public void streamData(byte[] data) throws IOException {
+    public void streamData(byte[] data) throws ClientDisconnectException, IOException {
         this.streamData(data, 20);
     }
 
-    public void sendAsChunk(byte[] data) throws IOException {
+    public void sendAsChunk(byte[] data) throws ClientDisconnectException {
         this.responseProcessor.sendChunk(data);
     }
 
-    public void endStream() throws IOException {
+    public void endStream() throws ClientDisconnectException {
         this.responseProcessor.endStream();
     }
 
-    public void streamData(byte[] data, int chunkSize) throws IOException {
+    public void streamData(byte[] data, int chunkSize) throws ClientDisconnectException, IOException {
 
         ByteArrayInputStream inBuffer = new ByteArrayInputStream(data);
         this.responseProcessor.streamFromStream(inBuffer, chunkSize);
     }
 
-    public void streamData(FileInputStream inputStream) throws IOException {
+    public void streamData(FileInputStream inputStream) throws ClientDisconnectException, IOException {
         this.streamData(inputStream, 1024*10);
     }
-    public void streamData(FileInputStream inputStream, int chunkSize) throws IOException {
+    public void streamData(FileInputStream inputStream, int chunkSize) throws ClientDisconnectException, IOException {
         this.responseProcessor.streamFromStream(inputStream, chunkSize);
     }
 }

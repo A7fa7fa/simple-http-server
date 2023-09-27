@@ -85,12 +85,16 @@ public class HttpResponse extends HttpMessage {
         throw new RuntimeException("Not implemented");
     }
 
-    public void pipe(OutputStream outputStream, byte[] data) throws IOException {
+    public void pipe(OutputStream outputStream, byte[] data) throws ClientDisconnectException {
         if (this.statusCode == null) {
             LOGGER.warn("Status code not set");
             throw new RuntimeException("Status code not set");
         }
-        outputStream.write(data);
+        try {
+            outputStream.write(data);
+        } catch (IOException e) {
+            throw new ClientDisconnectException(e);
+        }
     }
 
     String getServerTime() {
