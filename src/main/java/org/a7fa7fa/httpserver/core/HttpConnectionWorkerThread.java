@@ -49,7 +49,7 @@ public class HttpConnectionWorkerThread extends Thread {
             router.invoke(context);
             byte[] responseMessage = response.buildCompleteMessage();
             if (!response.isAlreadySend()) {
-                response.pipe(outputStream, responseMessage);
+                responseProcessor.pipe(responseMessage);
             }
 
 

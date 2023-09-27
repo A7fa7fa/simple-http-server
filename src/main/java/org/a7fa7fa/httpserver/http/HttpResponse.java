@@ -60,6 +60,10 @@ public class HttpResponse extends HttpMessage {
         this.statusCode = statusCode;
     }
 
+    public HttpStatusCode getStatusCode() {
+        return statusCode;
+    }
+
     public String getStatusLine() { // HTTP-version SP status-code SP reason-phrase //CRLF
         String SP = " ";
         StringBuilder sb = new StringBuilder();
@@ -106,20 +110,7 @@ public class HttpResponse extends HttpMessage {
         return message;
     }
 
-    public void pipe(OutputStream outputStream, byte[] data) throws ClientDisconnectException {
-        this.setAlreadySend(true);
-        if (this.statusCode == null) {
-            LOGGER.warn("Status code not set");
-            throw new RuntimeException("Status code not set");
-        }
-        try {
-            outputStream.write(data);
-        } catch (IOException e) {
-            throw new ClientDisconnectException(e);
-        }
-    }
-
-    String getServerTime() {
+    private String getServerTime() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
@@ -131,10 +122,5 @@ public class HttpResponse extends HttpMessage {
         String chunkSize = Integer.toHexString(data.length);
         return ByteProcessor.combine(chunkSize.getBytes(StandardCharsets.US_ASCII), this.CRLF.getBytes(StandardCharsets.US_ASCII), data, this.CRLF.getBytes(StandardCharsets.US_ASCII));
     }
-
-    public byte[] createEndStreamChunk() {
-        return this.createChunk(new byte[0]);
-    }
-
 
 }

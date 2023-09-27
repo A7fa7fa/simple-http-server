@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class ResponseProcessor {
@@ -76,10 +77,6 @@ public class ResponseProcessor {
         this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(fileContent.length)));
     }
 
-    private void pipe(byte[] data) throws ClientDisconnectException {
-        this.httpResponse.pipe(this.outputStream, data);
-    }
-
     void sendFullMessage() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildCompleteMessage());
     }
@@ -89,12 +86,12 @@ public class ResponseProcessor {
 
     void sendChunk(byte[] data) throws ClientDisconnectException {
         byte[] chunk = this.httpResponse.createChunk(data);
-        this.httpResponse.pipe(outputStream, chunk);
+        this.pipe(chunk);
     }
 
     public void endStream() throws ClientDisconnectException {
-        byte[] chunk = this.httpResponse.createEndStreamChunk();
-        this.httpResponse.pipe(outputStream, chunk);
+        byte[] chunk = this.createEndStreamChunk();
+        this.pipe(chunk);
     }
 
     public void streamFromStream(InputStream inputStream, int chunkSize) throws ClientDisconnectException, IOException {
@@ -110,5 +107,23 @@ public class ResponseProcessor {
             } catch (IOException e) {}
         }
     }
+
+    public void pipe(byte[] data) throws ClientDisconnectException {
+        this.httpResponse.setAlreadySend(true);
+        if (this.httpResponse.getStatusCode() == null) {
+            LOGGER.warn("Status code not set");
+            throw new RuntimeException("Status code not set");
+        }
+        try {
+            this.outputStream.write(data);
+        } catch (IOException e) {
+            throw new ClientDisconnectException(e);
+        }
+    }
+
+    private byte[] createEndStreamChunk() {
+        return this.httpResponse.createChunk(new byte[0]);
+    }
+
 
 }
