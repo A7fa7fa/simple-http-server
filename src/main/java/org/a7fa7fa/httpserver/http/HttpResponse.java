@@ -7,8 +7,6 @@ import org.a7fa7fa.httpserver.parser.ByteProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,21 +17,17 @@ public class HttpResponse extends HttpMessage {
     final static Logger LOGGER = LoggerFactory.getLogger(HttpResponse.class);
     private HttpStatusCode statusCode;
     private final HttpVersion httpVersion;
-
-    private final HashMap<String, HttpHeader> headers = new HashMap<String, HttpHeader>();
+    private final HashMap<String, HttpHeader> httpHeaders = new HashMap<String, HttpHeader>();
     private byte[] body = new byte[0];
-
     private final String CRLF = "\r\n";
-
     private boolean alreadySend = false;
-    private String contentType;
 
     public HttpResponse(HttpVersion httpVersion){
         this.httpVersion = httpVersion;
     }
 
     String getContentType() {
-        HttpHeader content = this.headers.get(HeaderName.CONTENT_TYPE.toString());
+        HttpHeader content = this.httpHeaders.get(HeaderName.CONTENT_TYPE.toString());
         if (content != null) {
             return content.getValue();
         }
@@ -80,12 +74,12 @@ public class HttpResponse extends HttpMessage {
     }
 
     public void addHeader(HttpHeader httpHeader){
-        this.headers.put(httpHeader.getHeaderField().getName(), httpHeader);
+        this.httpHeaders.put(httpHeader.getHeaderField().getName(), httpHeader);
     }
 
-    public String getHeaders(){
+    public String getHttpHeaders(){
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, HttpHeader> header : this.headers.entrySet()) {
+        for (Map.Entry<String, HttpHeader> header : this.httpHeaders.entrySet()) {
             sb.append(header.getValue().toStandardFormat());
             sb.append(CRLF);
         }
@@ -99,11 +93,11 @@ public class HttpResponse extends HttpMessage {
     }
 
     public byte[] buildStatusWithHeaders() {
-        return ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.getHeaders().getBytes(), this.CRLF.getBytes());
+        return ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.getHttpHeaders().getBytes(), this.CRLF.getBytes());
     }
 
     public byte[] buildCompleteMessage(){
-        byte[] message = ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.getHeaders().getBytes(), this.CRLF.getBytes(), this.body);
+        byte[] message = ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.getHttpHeaders().getBytes(), this.CRLF.getBytes(), this.body);
 
         LOGGER.info("Respond with: {}", this.getStatusLine());
         // this.printMessage(message);
@@ -112,8 +106,7 @@ public class HttpResponse extends HttpMessage {
 
     private String getServerTime() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(calendar.getTime());
     }

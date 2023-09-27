@@ -33,9 +33,9 @@ class HttpResponseTest {
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         assertNotNull(response);
         response.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, "123"));
-        assertEquals(response.getHeaders(), "content-length: 123\r\n");
+        assertEquals(response.getHttpHeaders(), "content-length: 123\r\n");
         response.addHeader(new HttpHeader(HeaderName.ACCEPT, "45"));
-        assertEquals(response.getHeaders(), "content-length: 123\r\naccept: 45\r\n");
+        assertEquals(response.getHttpHeaders(), "content-length: 123\r\naccept: 45\r\n");
     }
 
     @Test
@@ -44,8 +44,8 @@ class HttpResponseTest {
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         assertNotNull(response);
         response.setDefaultHeader();
-        assertTrue(response.getHeaders().contains("server"));
-        assertTrue(response.getHeaders().contains("date"));
+        assertTrue(response.getHttpHeaders().contains("server"));
+        assertTrue(response.getHttpHeaders().contains("date"));
     }
 
     @Test
