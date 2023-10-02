@@ -1,8 +1,8 @@
 Welcome!
 
-This project presents a straightforward HTTP web server written in Java, designed to delve into and experiment with the concepts outlined in [RFC 9112](https://datatracker.ietf.org/doc/html/rfc9112) for the HTTP/1.1 protocol. The aim is not to introduce groundbreaking features or achieve full RFC compliance but rather let me get ack into Java and gain a practical understanding of HTTP/1.1 concepts.
+This project presents a straightforward HTTP web server written in Java, designed to delve into and experiment with the concepts outlined in [RFC 9112](https://datatracker.ietf.org/doc/html/rfc9112) for the HTTP/1.1 protocol. The aim is not to introduce groundbreaking features or achieve full RFC compliance but rather let me get back into the Java-world and gain a practical understanding of HTTP/1.1 concepts.
 
-# Features:
+# Scope:
 
 Basic HTTP Server:
 
@@ -57,7 +57,7 @@ Feel free to use, copy, and modify this project as needed. Please give feedback 
 # Backlog
 
 - logging https://www.baeldung.com/logback
-- thread pool/ virtual threads. advantages/diadvantage
+- thread pool/ virtual threads. advantages/disadvantage
 - keep alive
 - htmx
 - identity provider/auth
