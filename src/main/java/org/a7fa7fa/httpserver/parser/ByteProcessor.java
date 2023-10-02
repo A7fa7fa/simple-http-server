@@ -43,8 +43,7 @@ public class ByteProcessor {
         GZIPOutputStream zipStream = new GZIPOutputStream(byteStream);
         zipStream.write(file);
         zipStream.close();
-        byte[] byteBody = byteStream.toByteArray();
-        return byteBody;
+        return byteStream.toByteArray();
     }
 
 }

@@ -57,7 +57,7 @@ public class ResponseProcessor {
     }
 
 
-    void prepareResponse(byte[] fileContent, HttpRequest httpRequest, int gzipMinFileSizeKb) throws IOException, HttpParsingException {
+    void prepareResponse(byte[] fileContent, HttpRequest httpRequest, int gzipMinFileSizeKb) throws IOException {
 
         if (this.httpResponse.getContentType() != null) {
             this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, this.httpResponse.getContentType()));

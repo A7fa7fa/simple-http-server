@@ -27,7 +27,7 @@ public class HttpResponse extends HttpMessage {
     }
 
     String getContentType() {
-        HttpHeader content = this.httpHeaders.get(HeaderName.CONTENT_TYPE.toString());
+        HttpHeader content = this.httpHeaders.get(HeaderName.CONTENT_TYPE.getName());
         if (content != null) {
             return content.getValue();
         }
@@ -84,6 +84,10 @@ public class HttpResponse extends HttpMessage {
             sb.append(CRLF);
         }
         return sb.toString();
+    }
+
+    public HttpHeader getHeader(HeaderName name){
+        return this.httpHeaders.get(name.getName());
     }
 
     public void setDefaultHeader() {

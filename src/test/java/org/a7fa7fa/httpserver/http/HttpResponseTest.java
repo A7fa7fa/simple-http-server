@@ -28,7 +28,7 @@ class HttpResponseTest {
     }
 
     @Test
-    void addHeaderTest() {
+    void shouldAddHeaderToResponseTest() {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         assertNotNull(response);
@@ -39,7 +39,7 @@ class HttpResponseTest {
     }
 
     @Test
-    void addDefaultHeaderTest() {
+    void shouldAddDefaultHeaderToResponseTest() {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         assertNotNull(response);
@@ -61,8 +61,8 @@ class HttpResponseTest {
 
         String validMessage = "HTTP/1.1 200 OK\r\n" +
                 "content-length: 123\r\n" +
-                "accept: 45\r\n" +
                 "server: servervalue\r\n" +
+                "accept: 45\r\n" +
                 "\r\n" +
                 "{\"key\": \"value\"}";
         assertEquals(ByteProcessor.byteToString(response.buildCompleteMessage()), validMessage);
@@ -78,30 +78,140 @@ class HttpResponseTest {
 
         String validMessage = "HTTP/1.1 200 OK\r\n" +
                 "content-length: 123\r\n" +
-                "accept: 45\r\n" +
                 "server: servervalue\r\n" +
+                "accept: 45\r\n" +
                 "\r\n";
         assertEquals(ByteProcessor.byteToString(response.buildCompleteMessage()), validMessage);
     }
+
     @Test
-    void clientUnderstandsTypeEveryType() {
-        HttpRequest request = new HttpRequest();
-        assertNotNull(request);
-        request.addHeader(new HttpHeader(HeaderName.ACCEPT, "*/*"));
-        assertFalse(request.clientNotUnderstandsType("text"));
+    void shouldCreateChunk() {
+        String chunkData = "this is chunk data";
+        String chunkDataSizeHex = Integer.toHexString(chunkData.length());
+        byte[] data = chunkData.getBytes(StandardCharsets.US_ASCII);
+        HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
+        assertNotNull(response);
+        assertEquals(ByteProcessor.byteToString(response.createChunk(data)), chunkDataSizeHex+"\r\n"+chunkData+"\r\n");
     }
+
     @Test
-    void clientUnderstandsTypeMissingHeader() {
-        HttpRequest request = new HttpRequest();
-        assertNotNull(request);
-        assertFalse(request.clientNotUnderstandsType("txt"));
+    void shouldCreateChunkWithSizeAsHex() {
+        String chunkData = "this is chunk data. more date. more date. more date. more date. more date.";
+        String chunkDataSizeHex = "4a";
+        byte[] data = chunkData.getBytes(StandardCharsets.US_ASCII);
+        HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
+        assertNotNull(response);
+        assertTrue(ByteProcessor.byteToString(response.createChunk(data)).startsWith(chunkDataSizeHex));
     }
+
     @Test
-    void clientUnderstandsTypeTxt() {
-        HttpRequest request = new HttpRequest();
-        assertNotNull(request);
-        request.addHeader(new HttpHeader(HeaderName.ACCEPT, "txt"));
-        assertTrue(request.clientNotUnderstandsType("not txt"));
+    void shouldReturnCompleteMessageWithoutBody() {
+        HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
+        assertNotNull(response);
+
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
+        response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
+        response.setDefaultHeader();
+        HttpHeader dateHeader = new HttpHeader();
+        dateHeader.setName("date");
+        dateHeader.setValue("123456798");
+        response.addHeader(dateHeader);
+
+        byte[] message = response.buildCompleteMessage();
+
+        assertNotNull(message);
+
+        String expected = "HTTP/1.1 200 OK\r\n" +
+                "date: 123456798\r\n" +
+                "server: simple-http-server\r\n" +
+                "host: localhost\r\n" +
+                "content-type: json\r\n"+
+                "\r\n";
+
+        assertEquals(ByteProcessor.byteToString(message), expected);
     }
+
+    @Test
+    void shouldReturnCompleteMessageWithBody() {
+        HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
+        assertNotNull(response);
+
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
+        response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
+        response.setDefaultHeader();
+        HttpHeader dateHeader = new HttpHeader();
+        dateHeader.setName("date");
+        dateHeader.setValue("123456798");
+        response.addHeader(dateHeader);
+        String body = "this is some data";
+        response.addBody(body.getBytes());
+
+        byte[] message = response.buildCompleteMessage();
+
+        assertNotNull(message);
+
+        String expected = "HTTP/1.1 200 OK\r\n" +
+                "date: 123456798\r\n" +
+                "server: simple-http-server\r\n" +
+                "host: localhost\r\n" +
+                "content-type: json\r\n"+
+                "\r\n" +
+                "this is some data";
+
+        assertEquals(ByteProcessor.byteToString(message), expected);
+    }
+
+    @Test
+    void shouldReturnStatusLineWithHeaders() {
+        HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
+        assertNotNull(response);
+
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
+        response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
+        response.setDefaultHeader();
+        HttpHeader dateHeader = new HttpHeader();
+        dateHeader.setName("date");
+        dateHeader.setValue("123456798");
+        response.addHeader(dateHeader);
+
+        byte[] message = response.buildStatusWithHeaders();
+
+        assertNotNull(message);
+
+        String expected = "HTTP/1.1 200 OK\r\n" +
+                "date: 123456798\r\n" +
+                "server: simple-http-server\r\n" +
+                "host: localhost\r\n" +
+                "content-type: json\r\n"+
+                "\r\n";
+
+        assertEquals(ByteProcessor.byteToString(message), expected);
+    }
+
+    @Test
+    void shouldReturnHeadersAsString() {
+        HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
+        assertNotNull(response);
+
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
+        response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
+        response.setDefaultHeader();
+        HttpHeader dateHeader = new HttpHeader();
+        dateHeader.setName("date");
+        dateHeader.setValue("123456798");
+        response.addHeader(dateHeader);
+
+        String headers = response.getHttpHeaders();
+
+        assertNotNull(headers);
+
+        String expected = "date: 123456798\r\n" +
+                "server: simple-http-server\r\n" +
+                "host: localhost\r\n" +
+                "content-type: json\r\n";
+
+        assertEquals(headers, expected);
+    }
+
 
 }
