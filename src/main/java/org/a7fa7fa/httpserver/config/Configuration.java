@@ -45,6 +45,10 @@ public class Configuration {
     }
 
     public void setApiPath(String apiPath) {
-        this.apiPath = apiPath;
+        String path = apiPath;
+        if (apiPath != null && !apiPath.isEmpty() && !apiPath.startsWith("/") ) {
+            path = "/"+apiPath;
+        }
+        this.apiPath = path;
     }
 }

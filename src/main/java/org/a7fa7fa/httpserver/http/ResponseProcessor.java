@@ -7,11 +7,9 @@ import org.a7fa7fa.httpserver.staticcontent.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class ResponseProcessor {
@@ -31,27 +29,27 @@ public class ResponseProcessor {
     }
 
 
-    private void setContentType(Path filePath, HttpRequest httpRequest) throws HttpParsingException {
-        String contentType = Reader.probeContentType(filePath);
-
+    void setContentTypeIfClientUnderstands(HttpRequest httpRequest, String contentType) throws HttpParsingException {
+        LOGGER.debug("Content type : " + contentType);
         if (contentType != null) {
             if (httpRequest.clientNotUnderstandsType(contentType)) {
                 throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_415_UNSUPPORTED_MEDIA_TYPE);
             }
         }
-        LOGGER.debug("Content type : " + contentType);
         this.httpResponse.setContentType(contentType);
     }
 
     byte[] readDataFromAbsoluteFile(HttpRequest httpRequest, String fileLocation) throws HttpParsingException, IOException {
         Path targetFilePath = Reader.getFilePath("", fileLocation);
-        this.setContentType(targetFilePath, httpRequest);
+        String contentType = Reader.probeContentType(targetFilePath);
+        this.setContentTypeIfClientUnderstands(httpRequest, contentType);
         return Reader.readFile(targetFilePath);
     }
     byte[] readDataFromFile(HttpRequest httpRequest, String webroot) throws HttpParsingException, IOException {
         String requestTarget = httpRequest.getRequestTarget();
         Path targetFilePath = Reader.getFilePath(webroot, requestTarget);
-        this.setContentType(targetFilePath, httpRequest);
+        String contentType = Reader.probeContentType(targetFilePath);
+        this.setContentTypeIfClientUnderstands(httpRequest, contentType);
         LOGGER.debug("Target file path : " + targetFilePath);
         return Reader.readFile(targetFilePath);
     }
@@ -75,6 +73,7 @@ public class ResponseProcessor {
         }
         this.httpResponse.addBody(fileContent);
         this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(fileContent.length)));
+        LOGGER.debug("Request prepared and added to response");
     }
 
     void sendFullMessage() throws ClientDisconnectException {

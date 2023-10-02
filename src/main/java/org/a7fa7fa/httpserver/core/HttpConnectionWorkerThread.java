@@ -54,7 +54,8 @@ public class HttpConnectionWorkerThread extends Thread {
 
 
         } catch (RuntimeException e) {
-            LOGGER.debug("Runtime caught." + e.getCause());
+            LOGGER.debug("Runtime caught " + e);
+            LOGGER.debug("Runtime caught " + e.getCause());
             Throwable originalException = e.getCause();
             HttpStatusCode code = HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR;
             if (originalException instanceof HttpParsingException) {

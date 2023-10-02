@@ -39,6 +39,21 @@ class HttpParserTest {
         assertEquals(httpRequest.getBody(), "body1\r\nbody2\r\n");
     }
     @Test
+    void parseHttpRequestNoClosingLineBreak() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateValidTestNoClosingLinebreakCase());
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+        assertNotNull(httpRequest);
+        assertEquals(httpRequest.getMethod(), HttpMethod.GET);
+        assertEquals(httpRequest.getRequestTarget(), "/");
+        assertEquals(httpRequest.getOriginalHttpVersion(), "HTTP/1.1");
+        assertEquals(httpRequest.getBestCompatibleHttpVersion(), HttpVersion.HTTP_1_1);
+        assertEquals(httpRequest.getHeader(HeaderName.CONTENT_LENGTH).getValue(), "14");
+    }
+    @Test
     void parseHttpRequestBadMethod() {
         HttpRequest httpRequest = null;
         try {
@@ -273,6 +288,24 @@ class HttpParserTest {
                 "body1\r\n" +
                 "body2\r\n" +
                 "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+    private InputStream generateValidTestNoClosingLinebreakCase() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Host: localhost:8080\r\n" +
+                "Connection: keep-alive\r\n" +
+                "Upgrade-Insecure-Requests: 1\r\n" +
+                "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\r\n" +
+                "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\r\n" +
+                "Sec-Fetch-Site: none\r\n" +
+                "Sec-Fetch-Mode: navigate\r\n" +
+                "Accept-Encoding: gzip, deflate, br\r\n" +
+                "Accept-Language: en-US,en;q=0.9\r\n" +
+                "Content-Length: 14\r\n" +
+                "\r\n" +
+                "body1\r\n" +
+                "body2";
         InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
         return inputStream;
     }

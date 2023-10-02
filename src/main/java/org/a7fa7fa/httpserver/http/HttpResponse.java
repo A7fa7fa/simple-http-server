@@ -35,6 +35,9 @@ public class HttpResponse extends HttpMessage {
     }
 
     void setContentType(String contentType) {
+        if (contentType == null) {
+            return;
+        }
         this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, contentType));
     }
 
@@ -59,6 +62,9 @@ public class HttpResponse extends HttpMessage {
     }
 
     public String getStatusLine() { // HTTP-version SP status-code SP reason-phrase //CRLF
+        if (this.statusCode == null) {
+            this.statusCode = HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR;
+        }
         String SP = " ";
         StringBuilder sb = new StringBuilder();
         sb.append(this.httpVersion.LITERAL);
@@ -100,7 +106,7 @@ public class HttpResponse extends HttpMessage {
         return ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.getHttpHeaders().getBytes(), this.CRLF.getBytes());
     }
 
-    public byte[] buildCompleteMessage(){
+    public byte[] buildCompleteMessage() {
         byte[] message = ByteProcessor.combine(this.getStatusLine().getBytes(), this.CRLF.getBytes(), this.getHttpHeaders().getBytes(), this.CRLF.getBytes(), this.body);
 
         LOGGER.info("Respond with: {}", this.getStatusLine());
