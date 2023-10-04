@@ -9,8 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ServerListenerThread extends Thread {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ServerListenerThread.class);
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(ServerListenerThread.class);
     private final ServerSocket serverSocket;
     private final Configuration configuration;
 

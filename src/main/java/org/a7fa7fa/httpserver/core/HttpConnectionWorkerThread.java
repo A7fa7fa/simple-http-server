@@ -15,8 +15,8 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class HttpConnectionWorkerThread extends Thread {
-    private final static Logger LOGGER = LoggerFactory.getLogger(HttpConnectionWorkerThread.class);
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(HttpConnectionWorkerThread.class);
     private final Socket socket;
     private final Configuration configuration;
 
@@ -70,7 +70,6 @@ public class HttpConnectionWorkerThread extends Thread {
                 HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
                 response.setStatusCode(code);
                 response.setDefaultHeader();
-                response.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, "0"));
                 LOGGER.error("Error response set : {}", response.getStatusLine());
                 try {
                     outputStream.write(response.buildCompleteMessage());
@@ -83,7 +82,6 @@ public class HttpConnectionWorkerThread extends Thread {
                 HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
                 response.setStatusCode(e.getErrorCode());
                 response.setDefaultHeader();
-                response.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, "0"));
                 LOGGER.debug("Error response set : {}", response.getStatusLine());
                 try {
                     outputStream.write(response.buildCompleteMessage());

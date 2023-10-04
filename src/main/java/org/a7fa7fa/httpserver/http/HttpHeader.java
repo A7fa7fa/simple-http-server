@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 public class HttpHeader {
 
     private static final String DELIMITER = ":";
-
     private static final String SP = " ";
     private HeaderName field;
     private String originalFieldName;
@@ -15,6 +14,7 @@ public class HttpHeader {
 
     HttpHeader() {
     }
+
     public HttpHeader(HeaderName headerFiled, String fieldValue) {
         this.setName(headerFiled);
         this.setValue(fieldValue);
@@ -24,6 +24,7 @@ public class HttpHeader {
         this.originalFieldName = headerField.getName();
         this.field = headerField;
     }
+
     public void setName(String nameLiteral) {
         if (nameLiteral.endsWith(DELIMITER)) {
             nameLiteral = nameLiteral.substring(0,  nameLiteral.length()-1);
@@ -48,6 +49,7 @@ public class HttpHeader {
     public String getValue() {
         return this.getOriginalFieldValue();
     }
+
     public String getName() {
         if (field == null){
             return getOriginalFieldName();
@@ -72,7 +74,9 @@ public class HttpHeader {
         sb.append(this.getValue());
         return sb.toString();
     }
+
     public byte[] getBytes() {
         return this.toStandardFormat().getBytes(StandardCharsets.US_ASCII);
     }
+
 }

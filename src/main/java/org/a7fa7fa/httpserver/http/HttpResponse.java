@@ -48,6 +48,7 @@ public class HttpResponse extends HttpMessage {
     void setAlreadySend(boolean alreadySend) {
         this.alreadySend = alreadySend;
     }
+
     public String toString() {
         return this.statusCode.toString();
     }
@@ -100,6 +101,7 @@ public class HttpResponse extends HttpMessage {
         this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
         this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
         this.addHeader(new HttpHeader(HeaderName.HOST, "localhost"));
+        this.addHeader(new HttpHeader(HeaderName.CONNECTION, "close"));
     }
 
     public byte[] buildStatusWithHeaders() {

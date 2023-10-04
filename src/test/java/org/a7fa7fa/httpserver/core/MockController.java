@@ -13,6 +13,7 @@ import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import java.io.IOException;
 
 public class MockController implements Controller {
+
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "*", controllerType = ControllerType.STATIC)
     public static void getStaticSite(Context context) throws IOException, ClientDisconnectException {
         context.setResponse("this is the file returned".getBytes());

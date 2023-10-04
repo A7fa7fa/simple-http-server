@@ -3,6 +3,7 @@ package org.a7fa7fa.httpserver.config;
 import ch.qos.logback.classic.Level;
 
 public class Configuration {
+
     private int port;
     private String webroot;
     private int gzipMinFileSizeKb;
@@ -32,12 +33,15 @@ public class Configuration {
     public void setGzipMinFileSizeKb(int gzipMinFileSizeKb) {
         this.gzipMinFileSizeKb = gzipMinFileSizeKb;
     }
+
     public String getLogLevelLiteral() {
         return logLevel;
     }
+
     public Level getLoglevel() {
         return LogLevel.parseLogLevel(logLevel);
     }
+
     public void setLogLevel(String logLevel) {this.logLevel = logLevel; }
 
     public String getApiPath() {

@@ -97,13 +97,41 @@ class HttpParserTest {
     }
 
     @Test
+    void parseHttpRequestInvalidCharacterInHeader() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateHeaderWithInvalidCharacter());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+
+    @Test
+    void parseHttpRequestEmptyPrecedingReqLine() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generatePrecedingEmptyLineTestCase());
+            assertNotNull(httpRequest);
+            assertEquals(httpRequest.getMethod(), HttpMethod.GET);
+            assertEquals(httpRequest.getRequestTarget(), "/");
+            assertEquals(httpRequest.getOriginalHttpVersion(), "HTTP/1.1");
+            assertEquals(httpRequest.getBestCompatibleHttpVersion(), HttpVersion.HTTP_1_1);
+
+        } catch (HttpParsingException e) {
+            fail(e);
+
+        }
+    }
+
+    @Test
     void parseHttpRequestEmptyReqLine() {
         HttpRequest httpRequest = null;
         try {
             httpRequest = httpParser.parseHttpRequest(generateEmptyReqlineTestCase());
             fail();
         } catch (HttpParsingException e) {
-            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
         }
     }
     @Test
@@ -271,6 +299,18 @@ class HttpParserTest {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
     }
+    @Test
+    void parseBodyInvalidCharactersInHeader() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderandTransferEncodingTestCase());
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+
+
 
     private InputStream generateValidTestCase() {
         String rawData = "GET / HTTP/1.1\r\n" +
@@ -343,6 +383,16 @@ class HttpParserTest {
     }
     private InputStream generateEmptyReqlineTestCase() {
         String rawData = "\r\n" +
+                "Host: localhost:8080\r\n" +
+                "Connection: keep-alive\r\n" +
+                "\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+
+    private InputStream generatePrecedingEmptyLineTestCase() {
+        String rawData = "\r\n" +
+                "GET / HTTP/1.1\r\n" +
                 "Host: localhost:8080\r\n" +
                 "Connection: keep-alive\r\n" +
                 "\r\n";
@@ -453,6 +503,17 @@ class HttpParserTest {
         String rawData = "GET / HTTP/1.1\r\n" +
                 "Content-Length: 14\r\n" +
                 "Host: localhost\r\n" +
+                "\r\n" +
+                "body1\r\n" +
+                "body2\r\n";
+        InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+        return inputStream;
+    }
+    private InputStream generateHeaderWithInvalidCharacter() {
+        String rawData = "GET / HTTP/1.1\r\n" +
+                "Content-Length: 14\r\n" +
+                "Host: localhost\r\n" +
+                "x-header:" + (char) 2 + " localhost\r\n" +
                 "\r\n" +
                 "body1\r\n" +
                 "body2\r\n";

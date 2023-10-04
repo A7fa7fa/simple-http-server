@@ -126,6 +126,7 @@ class HttpResponseTest {
                 "server: simple-http-server\r\n" +
                 "host: localhost\r\n" +
                 "content-type: json\r\n"+
+                "connection: close\r\n" +
                 "\r\n";
 
         assertEquals(ByteProcessor.byteToString(message), expected);
@@ -155,6 +156,7 @@ class HttpResponseTest {
                 "server: simple-http-server\r\n" +
                 "host: localhost\r\n" +
                 "content-type: json\r\n"+
+                "connection: close\r\n" +
                 "\r\n" +
                 "this is some data";
 
@@ -183,6 +185,7 @@ class HttpResponseTest {
                 "server: simple-http-server\r\n" +
                 "host: localhost\r\n" +
                 "content-type: json\r\n"+
+                "connection: close\r\n" +
                 "\r\n";
 
         assertEquals(ByteProcessor.byteToString(message), expected);
@@ -208,9 +211,10 @@ class HttpResponseTest {
         String expected = "date: 123456798\r\n" +
                 "server: simple-http-server\r\n" +
                 "host: localhost\r\n" +
-                "content-type: json\r\n";
+                "content-type: json\r\n" +
+                "connection: close\r\n";
 
-        assertEquals(headers, expected);
+                assertEquals(headers, expected);
     }
 
 

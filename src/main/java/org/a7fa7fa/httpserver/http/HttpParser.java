@@ -62,9 +62,16 @@ public class HttpParser {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
 
+                boolean isEmptyLinePriorRequestLine = !methodParsed && !targetParsed && processingDataBuffer.isEmpty();
+                if (isEmptyLinePriorRequestLine) {
+                    continue;
+                }
+
                 if (!methodParsed || !targetParsed) {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
+
+
                 try {
                     LOGGER.trace("Request line VERSION to process : {}", processingDataBuffer.toString());
                     httpRequest.setHttpVersion(processingDataBuffer.toString());
@@ -116,6 +123,17 @@ public class HttpParser {
 
     }
 
+    private int toLowercase(int _char) {
+        if (_char > 64 && _char < 91) {
+            return _char +32;
+        }
+        return _char;
+    }
+
+    private boolean isInHeaderNameCharacterSet(int _char) {
+        return (_char > 31 && _char < 127);
+    }
+
     private void parseHeaders(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {
         StringBuilder processingDataBuffer = new StringBuilder();
 
@@ -143,7 +161,7 @@ public class HttpParser {
                     return;
                 }
 
-                boolean hasNameWithoutValue = processingDataBuffer.toString().trim().isEmpty() && headerNameFound;
+                boolean hasNameWithoutValue = processingDataBuffer.isEmpty() && headerNameFound;
                 if (hasNameWithoutValue) {
                     throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                 }
@@ -158,9 +176,19 @@ public class HttpParser {
                 continue;
             }
 
+            if (!this.isInHeaderNameCharacterSet(_byte)) {
+                throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+            }
+
             boolean isLeadingSpace = processingDataBuffer.isEmpty() && (char) _byte == SP;
             if (!isLeadingSpace) {
-                processingDataBuffer.append((char) _byte);
+                processingDataBuffer.append((char) this.toLowercase(_byte));
+            }
+
+            boolean isSpacePrecededLine = isLeadingSpace && !headerNameFound;
+            // TODO: Obsolete Line Folding
+            if (isSpacePrecededLine) {
+                throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
             }
 
             boolean headerNameContainsSpace = !processingDataBuffer.isEmpty() && (char) _byte == SP && !headerNameFound;

@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Context {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(Context.class);
     private final HttpRequest httpRequest;
     private final Configuration configuration;
@@ -32,6 +33,7 @@ public class Context {
     public HttpRequest getHttpRequest() {
         return httpRequest;
     }
+
     public HttpResponse getHttpResponse() {
         return this.responseProcessor.getResponse();
     }
@@ -39,12 +41,15 @@ public class Context {
     public byte[] readContentFromFile(String fileLocation) throws HttpParsingException, IOException {
         return this.responseProcessor.readDataFromAbsoluteFile(this.httpRequest, fileLocation);
     }
+
     public byte[] readTargetFromFile() throws HttpParsingException, IOException {
         return this.responseProcessor.readDataFromFile(this.httpRequest, this.configuration.getWebroot());
     }
+
     public void setResponse(byte[] data) throws IOException {
         this.responseProcessor.prepareResponse(data, this.httpRequest, this.configuration.getGzipMinFileSizeKb());
     }
+
     public void setResponseStatus(HttpStatusCode code) {
         this.responseProcessor.getResponse().setStatusCode(code);
     }
@@ -82,6 +87,7 @@ public class Context {
     public void streamData(FileInputStream inputStream) throws ClientDisconnectException, IOException {
         this.streamData(inputStream, 1024*10);
     }
+
     public void streamData(FileInputStream inputStream, int chunkSize) throws ClientDisconnectException, IOException {
         this.responseProcessor.streamFromStream(inputStream, chunkSize);
     }

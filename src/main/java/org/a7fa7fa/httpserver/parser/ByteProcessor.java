@@ -6,12 +6,10 @@ import java.util.zip.GZIPOutputStream;
 
 public class ByteProcessor {
 
-    public static byte[] combine(byte[]...arrays)
-    {
+    public static byte[] combine(byte[]...arrays) {
         // Determine the length of the result array
         int totalLength = 0;
-        for (int i = 0; i < arrays.length; i++)
-        {
+        for (int i = 0; i < arrays.length; i++) {
             totalLength += arrays[i].length;
         }
 
@@ -20,8 +18,7 @@ public class ByteProcessor {
 
         // copy the source arrays into the result array
         int currentIndex = 0;
-        for (int i = 0; i < arrays.length; i++)
-        {
+        for (int i = 0; i < arrays.length; i++) {
             System.arraycopy(arrays[i], 0, result, currentIndex, arrays[i].length);
             currentIndex += arrays[i].length;
         }

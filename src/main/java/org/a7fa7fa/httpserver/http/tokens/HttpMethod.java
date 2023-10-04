@@ -1,7 +1,9 @@
 package org.a7fa7fa.httpserver.http.tokens;
 
 public enum HttpMethod {
+
     GET, HEAD;
+
     public static final int MAX_LENGTH;
 
     static {

@@ -1,6 +1,7 @@
 package org.a7fa7fa.httpserver.config;
 
 public class HttpConfigurationException extends RuntimeException {
+
     public HttpConfigurationException() {
         super();
     }

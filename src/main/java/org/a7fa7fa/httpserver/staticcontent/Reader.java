@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Reader {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(Reader.class);
 
     public static Path getFilePath(String webroot, String filePath ) throws HttpParsingException {

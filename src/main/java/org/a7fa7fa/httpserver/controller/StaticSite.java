@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class StaticSite implements Controller {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(StaticSite.class);
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "*", controllerType = ControllerType.STATIC)

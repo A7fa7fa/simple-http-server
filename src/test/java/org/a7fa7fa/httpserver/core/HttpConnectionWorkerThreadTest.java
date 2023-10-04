@@ -28,51 +28,86 @@ class HttpConnectionWorkerThreadTest {
     }
 
     @Test
-    void runValidRequest() throws Exception {
-        MockSocket mockSocket = new MockSocket();
-        mockSocket.setInput(this.validInputCase());
+    void runValidRequest()  {
+        try {
+            MockSocket mockSocket = new MockSocket();
+            mockSocket.setInput(this.validInputCase());
 
 
-        HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(mockSocket, config);
-        assertNotNull(workerThread);
+            HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(mockSocket, config);
+            assertNotNull(workerThread);
 
-        workerThread.run();
+            workerThread.run();
 
-        byte[] writtenOutput =  mockSocket.getBytesList();
+            byte[] writtenOutput =  mockSocket.getBytesList();
 
-        String out = ByteProcessor.byteToString(writtenOutput);
+            String out = ByteProcessor.byteToString(writtenOutput);
 
-        String expected = "HTTP/1.1 200 OK\r\n" +
-                "date: 12345\r\n" +
-                "content-length: 25\r\n" +
-                "server: simple-http-server\r\n" +
-                "host: localhost\r\n" +
-                "content-type: text\r\n" +
-                "\r\n" +
-                "this is the file returned";
+            String expected = "HTTP/1.1 200 OK\r\n" +
+                    "date: 12345\r\n" +
+                    "content-length: 25\r\n" +
+                    "server: simple-http-server\r\n" +
+                    "host: localhost\r\n" +
+                    "content-type: text\r\n" +
+                    "connection: close\r\n" +
+                    "\r\n" +
+                    "this is the file returned";
 
-        assertEquals(out, expected);
+            assertEquals(out, expected);
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
     @Test
-    void runNotFound() throws Exception {
-        MockSocket mockSocket = new MockSocket();
-        mockSocket.setInput(this.notFound());
+    void runMandatoryHostHeader() {
+        try {
+            MockSocket mockSocket = new MockSocket();
+            mockSocket.setInput("GET / HTTP/1.1\r\n" +
+                    "Connection: keep-alive\r\n" +
+                    "\r\n");
 
 
-        HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(mockSocket, config);
-        assertNotNull(workerThread);
+            HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(mockSocket, config);
+            assertNotNull(workerThread);
 
-        workerThread.run();
+            workerThread.run();
 
-        byte[] writtenOutput =  mockSocket.getBytesList();
+            byte[] writtenOutput =  mockSocket.getBytesList();
 
-        String out = ByteProcessor.byteToString(writtenOutput);
+            String out = ByteProcessor.byteToString(writtenOutput);
 
-        assertTrue(out.startsWith("HTTP/1.1 404 Not found"));
-        assertTrue(out.contains("server: simple-http-server"));
-        assertTrue(out.contains("host: localhost"));
-        assertTrue(out.contains("content-length: 0"));
+            assertTrue(out.startsWith("HTTP/1.1 400 Bad Request"));
+            assertTrue(out.contains("server: simple-http-server"));
+            assertTrue(out.contains("host: localhost"));
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+
+    @Test
+    void runTargetNotFound() {
+        try {
+            MockSocket mockSocket = new MockSocket();
+            mockSocket.setInput(this.notFound());
+
+
+            HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(mockSocket, config);
+            assertNotNull(workerThread);
+
+            workerThread.run();
+
+            byte[] writtenOutput =  mockSocket.getBytesList();
+
+            String out = ByteProcessor.byteToString(writtenOutput);
+
+            assertTrue(out.startsWith("HTTP/1.1 404 Not found"));
+            assertTrue(out.contains("server: simple-http-server"));
+            assertTrue(out.contains("host: localhost"));
+    } catch (Exception e) {
+        fail(e);
+        }
     }
 
     private String validInputCase() {

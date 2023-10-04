@@ -1,6 +1,7 @@
 package org.a7fa7fa.httpserver.http.tokens;
 
 public enum HeaderName {
+
     CONTENT_LENGTH("Content-Length"),
     CONTENT_TYPE("Content-Type"),
     CONTENT_ENCODING("Content-Encoding"),
@@ -9,7 +10,8 @@ public enum HeaderName {
     TRANSFER_ENCODING("Transfer-Encoding"),
     DATE("Date"),
     HOST("Host"),
-    ACCEPT("Accept");
+    ACCEPT("Accept"),
+    CONNECTION("Connection");
 
     private final String fieldNameLowerCase;
 

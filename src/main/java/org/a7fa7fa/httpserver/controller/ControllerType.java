@@ -3,6 +3,7 @@ package org.a7fa7fa.httpserver.controller;
 import org.a7fa7fa.httpserver.http.HttpRequest;
 
 public enum ControllerType {
+
     STATIC("static"),
     API("api");
 

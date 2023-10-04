@@ -21,9 +21,7 @@ import java.util.function.Consumer;
 public class Router {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Router.class);
-
     private final Map<String, Consumer<Context>> routes = new HashMap<>();
-
     private static Router myRouter;
     private final Configuration configuration;
 

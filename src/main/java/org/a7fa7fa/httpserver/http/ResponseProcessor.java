@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 
 public class ResponseProcessor {
+
     private final static Logger LOGGER = LoggerFactory.getLogger(ResponseProcessor.class);
 
     private final HttpResponse httpResponse;
@@ -27,7 +28,6 @@ public class ResponseProcessor {
     HttpResponse getResponse() {
         return this.httpResponse;
     }
-
 
     void setContentTypeIfClientUnderstands(HttpRequest httpRequest, String contentType) throws HttpParsingException {
         LOGGER.debug("Content type : " + contentType);
@@ -45,6 +45,7 @@ public class ResponseProcessor {
         this.setContentTypeIfClientUnderstands(httpRequest, contentType);
         return Reader.readFile(targetFilePath);
     }
+
     byte[] readDataFromFile(HttpRequest httpRequest, String webroot) throws HttpParsingException, IOException {
         String requestTarget = httpRequest.getRequestTarget();
         Path targetFilePath = Reader.getFilePath(webroot, requestTarget);
@@ -53,7 +54,6 @@ public class ResponseProcessor {
         LOGGER.debug("Target file path : " + targetFilePath);
         return Reader.readFile(targetFilePath);
     }
-
 
     void prepareResponse(byte[] fileContent, HttpRequest httpRequest, int gzipMinFileSizeKb) throws IOException {
 
@@ -79,6 +79,7 @@ public class ResponseProcessor {
     void sendFullMessage() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildCompleteMessage());
     }
+
     void sendWithoutBody() throws ClientDisconnectException {
         this.pipe(this.httpResponse.buildStatusWithHeaders());
     }

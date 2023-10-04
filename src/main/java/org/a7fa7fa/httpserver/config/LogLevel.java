@@ -9,6 +9,7 @@ import java.util.Arrays;
 public class LogLevel {
 
     static String[] levels = new String[5];
+
     static {
         levels[0] = "trace";
         levels[1] = "debug";
