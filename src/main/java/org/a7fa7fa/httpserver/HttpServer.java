@@ -4,7 +4,6 @@ import org.a7fa7fa.httpserver.controller.Controller;
 import org.a7fa7fa.httpserver.controller.StaticSite;
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.config.ConfigurationManager;
-import org.a7fa7fa.httpserver.controller.DefaultApiEndpoint;
 import org.a7fa7fa.httpserver.core.Router;
 import org.a7fa7fa.httpserver.core.ServerListenerThread;
 import org.slf4j.Logger;
