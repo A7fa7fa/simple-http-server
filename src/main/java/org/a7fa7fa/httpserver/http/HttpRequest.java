@@ -80,6 +80,10 @@ public class HttpRequest extends HttpMessage {
         return this.httpHeaders.get(field.getName());
     }
 
+    public boolean isPersistentConnection() {
+        return this.getHeader(HeaderName.CONNECTION) != null &&  this.getHeader(HeaderName.CONNECTION).getValue().equalsIgnoreCase("keep-alive") ;
+    }
+
     public String toString(){
         return method + " " + requestTarget + " " + originalHttpVersion;
     }
