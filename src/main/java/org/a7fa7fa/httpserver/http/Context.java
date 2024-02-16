@@ -57,19 +57,16 @@ public class Context {
 
     public void setDefaultResponseHeader(){
         this.responseProcessor.getResponse().setDefaultHeader();
-    }
-
-    public void send() throws ClientDisconnectException {
         if (this.httpRequest.isPersistentConnection()) {
             this.addHeader(new HttpHeader(HeaderName.CONNECTION, "keep-alive"));
         }
+    }
+
+    public void send() throws ClientDisconnectException {
         this.responseProcessor.sendFullMessage();
     }
 
     public void sendStatusAndHeader() throws ClientDisconnectException {
-        if (this.httpRequest.isPersistentConnection()){
-            this.addHeader(new HttpHeader(HeaderName.CONNECTION, "keep-alive"));
-        }
         this.responseProcessor.sendWithoutBody();
     }
 
