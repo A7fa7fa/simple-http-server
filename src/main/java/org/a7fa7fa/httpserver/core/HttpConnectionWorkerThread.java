@@ -49,7 +49,7 @@ public class HttpConnectionWorkerThread extends Thread {
                 start = System.currentTimeMillis();
 
                 HttpParser httpParser = new HttpParser();
-                HttpRequest request = httpParser.parseHttpRequest(inputStream);
+                HttpRequest request = httpParser.parseHttpRequest(inputStream, configuration.getMaxBodySize());
                 if (request.getMethod() == null){
                     LOGGER.debug("Closing empty request");
                     return;

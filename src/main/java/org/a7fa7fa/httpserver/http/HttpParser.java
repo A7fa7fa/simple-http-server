@@ -24,7 +24,7 @@ public class HttpParser {
     public HttpParser() {
     }
 
-    public HttpRequest parseHttpRequest(InputStream inputStream) throws HttpParsingException {
+    public HttpRequest parseHttpRequest(InputStream inputStream, int maxBodySize) throws HttpParsingException {
         InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
         HttpRequest httpRequest = new HttpRequest();
 
@@ -32,7 +32,7 @@ public class HttpParser {
             this.parseRequestLine(reader, httpRequest);
             this.parseHeaders(reader, httpRequest);
             this.validateHeaders(httpRequest);
-            this.parseBody(reader, httpRequest);
+            this.parseBody(reader, httpRequest, maxBodySize);
         } catch (IOException e) {
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR);
         }
@@ -207,7 +207,7 @@ public class HttpParser {
     }
 
 
-    private void parseBody(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {
+    private void parseBody(InputStreamReader reader, HttpRequest httpRequest, int maxBodySize) throws IOException, HttpParsingException {
         StringBuilder processingDataBuffer = new StringBuilder();
         int contentLength = 0;
         HttpHeader contentLengthHeader = httpRequest.getHeader(HeaderName.CONTENT_LENGTH);
@@ -232,6 +232,11 @@ public class HttpParser {
         if (contentLength == 0){
             LOGGER.trace("No body");
             return;
+        }
+
+        if (contentLength > maxBodySize){
+            LOGGER.trace("To big Body.");
+            throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
 
         int _byte;
