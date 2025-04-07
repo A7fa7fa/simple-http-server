@@ -1,5 +1,6 @@
 package org.a7fa7fa.httpserver.http;
 
+import org.a7fa7fa.httpserver.http.exceptions.BadHttpVersionException;
 import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
 import org.junit.jupiter.api.Test;
 

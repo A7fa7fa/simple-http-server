@@ -8,6 +8,7 @@ public enum HttpStatusCode {
     CLIENT_ERROR_404_NOT_FOUND(404, "Not found"),
     CLIENT_ERROR_414_URI_TOO_LONG(414, "URI too long"),
     CLIENT_ERROR_415_UNSUPPORTED_MEDIA_TYPE(415, "Unsupported Media Type"),
+    CLIENT_ERROR_422_UNPROCESSABLE_CONTENT(422, "Unprocessable Content"),
 
     /* SERVER ERRORS*/
     CLIENT_ERROR_500_INTERNAL_SEVER_ERROR(500, "Internal Server Error"),

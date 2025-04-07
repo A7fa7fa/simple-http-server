@@ -1,5 +1,7 @@
 package org.a7fa7fa.httpserver.http;
 
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.a7fa7fa.httpserver.parser.ByteProcessor;

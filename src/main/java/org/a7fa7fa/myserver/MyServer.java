@@ -12,13 +12,16 @@ public class MyServer {
     private final static Logger LOGGER = LoggerFactory.getLogger(org.a7fa7fa.httpserver.HttpServer.class);
 
     public static void main(String[] args){
-        String configLocation = "src/main/resources/http.json";
+        String configLocation = "";
 
         if (args != null && args.length == 1) {
             configLocation = args[0];
         } else if (Files.exists(Paths.get("http.json"))) {
             configLocation = "http.json";
+        } else {
+            throw new RuntimeException("Missing config file.");
         }
+
         HttpServer server = new HttpServer(configLocation);
         server.useAsStaticServer();
         server.register(DefaultApiEndpoint.class);

@@ -2,6 +2,8 @@ package org.a7fa7fa.httpserver.http;
 
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,7 @@ public class Context {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Context.class);
     private final HttpRequest httpRequest;
-    private final Configuration configuration;
+    public final Configuration configuration;
     private final ResponseProcessor responseProcessor;
 
     public Context(HttpRequest httpRequest, Configuration configuration, ResponseProcessor responseProcessor) {

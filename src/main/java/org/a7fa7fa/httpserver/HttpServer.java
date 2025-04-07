@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class HttpServer {
 
@@ -19,16 +17,6 @@ public class HttpServer {
     private final static ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
     private Configuration conf;
-
-    public HttpServer() {
-        String confPath = "src/main/resources/http.json";
-
-        if (Files.exists(Paths.get("http.json"))) {
-            confPath = "http.json";
-        }
-        this.setConfiguration(confPath);
-        LOGGER.info("Config located : " + confPath);
-    }
 
     public HttpServer(String configLocation) {
         this.setConfiguration(configLocation);

@@ -1,4 +1,4 @@
-package org.a7fa7fa.httpserver.http;
+package org.a7fa7fa.httpserver.http.exceptions;
 
 public class ClientDisconnectException extends Exception {
 

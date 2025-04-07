@@ -10,6 +10,7 @@ public class Configuration {
     private String logLevel;
     private String apiPath;
     private int maxBodySize;
+    private String fileLocation;
 
     public int getPort() {
         return port;
@@ -63,5 +64,13 @@ public class Configuration {
 
     public void setMaxBodySize(int maxBodySize) {
         this.maxBodySize = maxBodySize;
+    }
+
+    public String getFileLocation() {
+        return fileLocation;
+    }
+
+    public void setFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
     }
 }
