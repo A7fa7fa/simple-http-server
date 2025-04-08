@@ -1,6 +1,7 @@
 package org.a7fa7fa.httpserver.http;
 
 import org.a7fa7fa.httpserver.config.Configuration;
+import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,9 @@ public class Context {
 
     public void setDefaultResponseHeader(){
         this.responseProcessor.getResponse().setDefaultHeader();
+        if (this.httpRequest.isPersistentConnection()) {
+            this.addHeader(new HttpHeader(HeaderName.CONNECTION, "keep-alive"));
+        }
     }
 
     public void send() throws ClientDisconnectException {

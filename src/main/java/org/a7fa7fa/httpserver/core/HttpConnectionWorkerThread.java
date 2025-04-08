@@ -30,26 +30,46 @@ public class HttpConnectionWorkerThread extends Thread {
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
+        long start = System.currentTimeMillis();
+
         try {
+
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
 
-            HttpParser httpParser = new HttpParser();
-            HttpRequest request = httpParser.parseHttpRequest(inputStream);
-            if (request.getMethod() == null){
-                LOGGER.debug("Closing empty request");
-                return;
-            }
+            while(true) {
+                if (inputStream.available() == 0) {
+                    long curr = System.currentTimeMillis();
+                    if (((curr - start) / 1000) > 20 ) {
+                        LOGGER.info("Connection closing");
+                        break;
+                    }
+                    continue;
+                }
+                start = System.currentTimeMillis();
 
-            HttpResponse response = new HttpResponse(request.getBestCompatibleHttpVersion());
+                HttpParser httpParser = new HttpParser();
+                HttpRequest request = httpParser.parseHttpRequest(inputStream, configuration.getMaxBodySize());
+                if (request.getMethod() == null){
+                    LOGGER.debug("Closing empty request");
+                    return;
+                }
 
-            Router router = Router.getInstance(configuration);
-            ResponseProcessor responseProcessor = new ResponseProcessor(response, outputStream);
-            Context context = new Context(request, this.configuration, responseProcessor);
-            router.invoke(context);
-            if (!response.isAlreadySend()) {
-                byte[] responseMessage = response.buildCompleteMessage();
-                responseProcessor.pipe(responseMessage);
+                HttpResponse response = new HttpResponse(request.getBestCompatibleHttpVersion());
+
+                Router router = Router.getInstance(configuration);
+                ResponseProcessor responseProcessor = new ResponseProcessor(response, outputStream);
+                Context context = new Context(request, this.configuration, responseProcessor);
+                router.invoke(context);
+                if (!response.isAlreadySend()) {
+                    byte[] responseMessage = response.buildCompleteMessage();
+                    responseProcessor.pipe(responseMessage);
+                }
+
+                if (!request.isPersistentConnection()) {
+                    break;
+                }
+                LOGGER.debug("Persistent connection");
             }
 
 

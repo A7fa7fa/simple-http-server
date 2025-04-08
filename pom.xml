@@ -28,7 +28,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <!-- here we specify that we want to use the main method within the App class -->
-                            <mainClass>org.a7fa7fa.httpserver.HttpServer</mainClass>
+                            <mainClass>org.a7fa7fa.myserver.MyServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

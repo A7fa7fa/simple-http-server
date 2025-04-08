@@ -26,7 +26,7 @@ class HttpParserTest {
     void parseHttpRequest() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateValidTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateValidTestCase(), 1024);
         } catch (HttpParsingException e) {
             fail(e);
         }
@@ -42,7 +42,7 @@ class HttpParserTest {
     void parseHttpRequestNoClosingLineBreak() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateValidTestNoClosingLinebreakCase());
+            httpRequest = httpParser.parseHttpRequest(generateValidTestNoClosingLinebreakCase(), 1024);
         } catch (HttpParsingException e) {
             fail(e);
         }
@@ -57,7 +57,7 @@ class HttpParserTest {
     void parseHttpRequestBadMethod() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateBadTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateBadTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
@@ -68,7 +68,7 @@ class HttpParserTest {
     void parseHttpRequestTooLongMethod() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateTooLongMethodTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateTooLongMethodTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
@@ -79,7 +79,7 @@ class HttpParserTest {
     void parseHttpRequestTooManyArguments() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateTooManyArgumentsTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateTooManyArgumentsTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -89,7 +89,7 @@ class HttpParserTest {
     void parseHttpRequestTooFewArguments() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateTooFewArgumentsTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateTooFewArgumentsTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -100,7 +100,7 @@ class HttpParserTest {
     void parseHttpRequestInvalidCharacterInHeader() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateHeaderWithInvalidCharacter());
+            httpRequest = httpParser.parseHttpRequest(generateHeaderWithInvalidCharacter(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -111,7 +111,7 @@ class HttpParserTest {
     void parseHttpRequestEmptyPrecedingReqLine() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generatePrecedingEmptyLineTestCase());
+            httpRequest = httpParser.parseHttpRequest(generatePrecedingEmptyLineTestCase(), 1024);
             assertNotNull(httpRequest);
             assertEquals(httpRequest.getMethod(), HttpMethod.GET);
             assertEquals(httpRequest.getRequestTarget(), "/");
@@ -128,7 +128,7 @@ class HttpParserTest {
     void parseHttpRequestEmptyReqLine() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateEmptyReqlineTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateEmptyReqlineTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
@@ -138,7 +138,7 @@ class HttpParserTest {
     void parseHttpRequestInvalidCRWithoutLF() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateInvalidCRWithoutLF());
+            httpRequest = httpParser.parseHttpRequest(generateInvalidCRWithoutLF(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -149,7 +149,7 @@ class HttpParserTest {
     void parseHttpRequestBadHttpVersionFormat() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateBadHttpVersionFormat());
+            httpRequest = httpParser.parseHttpRequest(generateBadHttpVersionFormat(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -159,7 +159,7 @@ class HttpParserTest {
     void parseHttpRequestUnsupportedHttpVersionFormat() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateUnsupportedHttpVersionFormat());
+            httpRequest = httpParser.parseHttpRequest(generateUnsupportedHttpVersionFormat(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
@@ -170,7 +170,7 @@ class HttpParserTest {
     void parseHttpRequestSupportedHttpVersionFormat() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateSupportedHttpVersionFormat());
+            httpRequest = httpParser.parseHttpRequest(generateSupportedHttpVersionFormat(), 1024);
             assertNotNull(httpRequest);
             assertEquals(httpRequest.getBestCompatibleHttpVersion(), HttpVersion.HTTP_1_1);
         } catch (HttpParsingException e) {
@@ -182,7 +182,7 @@ class HttpParserTest {
     void parseSpaceBeforeColonHeaderTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateSpaceBeforeColonHeaderTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateSpaceBeforeColonHeaderTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -192,7 +192,7 @@ class HttpParserTest {
     void parseSpaceInHeaderNameTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateSpaceInHeaderNameTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateSpaceInHeaderNameTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -202,7 +202,7 @@ class HttpParserTest {
     void parseQuotedHeaderTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderTestCase(), 1024);
             assertEquals(httpRequest.getHeaders().get("host").getValue(), "\"localhost:8080\"");
         } catch (HttpParsingException e) {
             fail(e);
@@ -213,7 +213,7 @@ class HttpParserTest {
     void parseQuotedHeaderWithoutClosingQuotTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithoutClosingQuoteTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithoutClosingQuoteTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -223,7 +223,7 @@ class HttpParserTest {
     void parseQuotedHeaderWithoutWithNewLineTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithNewLineTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateQuotedHeaderWithNewLineTestCase(), 1024);
             assertEquals(httpRequest.getHeaders().get("host").getValue(), "\"localhost \r\n :8080\"");
         } catch (HttpParsingException e) {
             fail(e);
@@ -234,7 +234,7 @@ class HttpParserTest {
     void parseHeaderKnownHeaderTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateValidTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateValidTestCase(), 1024);
             assertEquals(httpRequest.getHeaders().get("accept").getValue(), "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
             assertEquals(httpRequest.getHeaders().get("accept").getHeaderField().getName(), "accept");
             assertEquals(httpRequest.getHeaders().get("accept").getHeaderField().getName(), "accept");
@@ -246,7 +246,7 @@ class HttpParserTest {
     void parseHeaderGetByEnumTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateValidTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateValidTestCase(), 1024);
             assertEquals(httpRequest.getHeader(HeaderName.ACCEPT).getValue(), "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
             assertEquals(httpRequest.getHeader(HeaderName.ACCEPT).getHeaderField().getName(), "accept");
             assertEquals(httpRequest.getHeader(HeaderName.ACCEPT).getHeaderField().getName(), "accept");
@@ -259,7 +259,7 @@ class HttpParserTest {
     void parseHeaderWhitespaceInHeaderNameTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateWhitespaceInHeaderNameTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateWhitespaceInHeaderNameTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -270,7 +270,7 @@ class HttpParserTest {
     void parseBodyNoContentLengthButTransferEncodingTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderWithTransferEncodingTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderWithTransferEncodingTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_501_NOT_IMPLEMENTED);
@@ -281,7 +281,7 @@ class HttpParserTest {
     void parseBodyWithContentTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateValidBodyTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateValidBodyTestCase(), 1024);
             assertNotNull(httpRequest);
             assertEquals(httpRequest.getBody(), "body1\r\nbody2\r\n");
         } catch (HttpParsingException e) {
@@ -290,10 +290,21 @@ class HttpParserTest {
     }
 
     @Test
+    void parseBodyMaxBodySizeTestCase() {
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = httpParser.parseHttpRequest(generateValidBodyTestCase(), 2);
+            fail();
+        } catch (HttpParsingException e) {
+            assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
+        }
+    }
+
+    @Test
     void parseBodyNoContentLengthNoTransferEncodingTestCase() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderandTransferEncodingTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderandTransferEncodingTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
@@ -303,7 +314,7 @@ class HttpParserTest {
     void parseBodyInvalidCharactersInHeader() {
         HttpRequest httpRequest = null;
         try {
-            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderandTransferEncodingTestCase());
+            httpRequest = httpParser.parseHttpRequest(generateNoContentLengthHeaderandTransferEncodingTestCase(), 1024);
             fail();
         } catch (HttpParsingException e) {
             assertEquals(e.getErrorCode(), HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);

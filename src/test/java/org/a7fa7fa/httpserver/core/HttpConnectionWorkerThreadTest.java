@@ -113,7 +113,7 @@ class HttpConnectionWorkerThreadTest {
     private String validInputCase() {
         return "GET / HTTP/1.1\r\n" +
                 "Host: localhost:8080\r\n" +
-                "Connection: keep-alive\r\n" +
+                "Connection: close\r\n" +
                 "Upgrade-Insecure-Requests: 1\r\n" +
                 "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36\r\n" +
                 "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\r\n" +

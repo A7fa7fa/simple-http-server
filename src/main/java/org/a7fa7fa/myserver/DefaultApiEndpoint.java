@@ -1,5 +1,7 @@
-package org.a7fa7fa.httpserver.controller;
+package org.a7fa7fa.myserver;
 
+import org.a7fa7fa.httpserver.controller.Controller;
+import org.a7fa7fa.httpserver.controller.RegisterFunction;
 import org.a7fa7fa.httpserver.http.ClientDisconnectException;
 import org.a7fa7fa.httpserver.http.Context;
 import org.a7fa7fa.httpserver.http.HttpHeader;

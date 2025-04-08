@@ -9,6 +9,7 @@ public class Configuration {
     private int gzipMinFileSizeKb;
     private String logLevel;
     private String apiPath;
+    private int maxBodySize;
 
     public int getPort() {
         return port;
@@ -54,5 +55,13 @@ public class Configuration {
             path = "/"+apiPath;
         }
         this.apiPath = path;
+    }
+
+    public int getMaxBodySize() {
+        return maxBodySize;
+    }
+
+    public void setMaxBodySize(int maxBodySize) {
+        this.maxBodySize = maxBodySize;
     }
 }

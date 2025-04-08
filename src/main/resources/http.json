@@ -3,5 +3,6 @@
   "webroot": "src/main/resources/public",
   "gzipMinFileSizeKb": 5,
   "logLevel": "info",
-  "apiPath": "/api"
+  "apiPath": "/api",
+  "maxBodySize": 1024
 }
