@@ -20,7 +20,7 @@ public class Context {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Context.class);
     private final HttpRequest httpRequest;
-    public final Configuration configuration;
+    private final Configuration configuration;
     private final ResponseProcessor responseProcessor;
 
     public Context(HttpRequest httpRequest, Configuration configuration, ResponseProcessor responseProcessor) {
@@ -35,6 +35,18 @@ public class Context {
 
     public String toString() {
         return this.httpRequest.toString() + " - " + this.responseProcessor.getResponse().toString();
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public String getCookieValue(String cookieName) {
+        HttpHeader cookieHeader = httpRequest.getHeader(HeaderName.COOKIE);
+        if (cookieHeader == null) return null;
+
+        return cookieHeader.getValue();
+
     }
 
     public HttpRequest getHttpRequest() {

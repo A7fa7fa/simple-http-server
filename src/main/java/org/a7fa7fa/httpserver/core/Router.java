@@ -6,6 +6,7 @@ import org.a7fa7fa.httpserver.controller.ControllerType;
 import org.a7fa7fa.httpserver.controller.RegisterFunction;
 import org.a7fa7fa.httpserver.http.Context;
 import org.a7fa7fa.httpserver.http.HttpResponse;
+import org.a7fa7fa.httpserver.http.exceptions.HttpException;
 import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.HttpRequest;

@@ -21,7 +21,7 @@ public class DefaultApiEndpoint implements Controller {
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/config")
     public static void myStaticFunction(Context context) throws HttpParsingException, IOException, ClientDisconnectException {
-        byte[] fileContent = context.readContentFromFile(context.configuration.getFileLocation());
+        byte[] fileContent = context.readContentFromFile(context.getConfiguration().getFileLocation());
         context.setResponse(fileContent);
         context.setDefaultResponseHeader();
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);

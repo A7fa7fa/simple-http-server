@@ -31,6 +31,8 @@ public class HttpServer {
         LOGGER.info("Min file size for compressing : " + this.conf.getGzipMinFileSizeKb());
         LOGGER.info("Log level : " + this.conf.getLogLevelLiteral());
         LOGGER.info("Api path : " + this.conf.getApiPath());
+        LOGGER.info("File conf : " + this.conf.getFileLocation());
+        LOGGER.info("Max body size : " + this.conf.getMaxBodySize());
 
         rootLogger.setLevel(this.conf.getLoglevel());
     }

@@ -1,19 +1,9 @@
 package org.a7fa7fa.httpserver.http;
 
-import org.a7fa7fa.httpserver.config.Configuration;
-import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
-import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
-import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
-import org.a7fa7fa.httpserver.parser.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -37,6 +27,51 @@ public class HttpCookie {
     private static final DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter
         .ofPattern("EEE, dd MMM yyyy HH:mm:ss z")
         .withZone(ZoneOffset.UTC);
+
+    public static String extractValue(String keyName, HttpHeader cookieheader) {
+        if (cookieheader.getName() != HeaderName.COOKIE.getName()) return null;
+
+        String cookieString = cookieheader.getValue();
+
+        int i = 0;
+        char equal = '=';
+        char space = ' ';
+        char semi = ';';
+        StringBuffer keyBuffer = new StringBuffer();
+        boolean foundKey = false;
+        while (i < cookieString.length()) {
+            if (cookieString.charAt(i) == space) {
+                i++;
+                continue;
+            }
+
+            if (cookieString.charAt(i) == equal && !keyBuffer.toString().equals(keyName)) {
+                keyBuffer.delete(0, keyBuffer.length());
+                while (i < cookieString.length() && cookieString.charAt(i) != semi) {i++;}
+                i++;
+                continue;
+            }
+
+            if (cookieString.charAt(i) == equal && keyBuffer.toString().equals(keyName)) {
+                foundKey = true;
+                keyBuffer.delete(0, keyBuffer.length());
+                i++;
+                continue;
+            }
+
+            if (!foundKey) {
+                keyBuffer.append(cookieString.charAt(i));
+            } else {
+                if (cookieString.charAt(i) == semi) break;
+                keyBuffer.append(cookieString.charAt(i));
+            }
+            i++;
+
+        }
+        LOGGER.debug("cookieString" + cookieString);
+        if (foundKey) return keyBuffer.toString();
+        return null;
+    }
 
     public static String formatExpires(long timestampMs) {
         ZonedDateTime dateTime = Instant.ofEpochMilli(timestampMs).atZone(ZoneOffset.UTC);
