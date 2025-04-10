@@ -1,9 +1,9 @@
 package org.a7fa7fa.httpserver.http.tokens;
 
-import org.a7fa7fa.httpserver.http.BadHttpVersionException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.a7fa7fa.httpserver.http.exceptions.BadHttpVersionException;
 
 public enum HttpVersion {
 

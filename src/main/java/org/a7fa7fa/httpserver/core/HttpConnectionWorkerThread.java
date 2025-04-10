@@ -2,6 +2,9 @@ package org.a7fa7fa.httpserver.core;
 
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.http.*;
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
@@ -80,6 +83,9 @@ public class HttpConnectionWorkerThread extends Thread {
             HttpStatusCode code = HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR;
             if (originalException instanceof HttpParsingException) {
                 code = ((HttpParsingException) originalException).getErrorCode();
+            }
+            if (originalException instanceof HttpException) {
+                code = ((HttpException) originalException).getErrorCode();
             }
             if (originalException instanceof SocketException || originalException instanceof ClientDisconnectException) {
                 LOGGER.debug("Client disconnected so just return.");

@@ -2,9 +2,15 @@ package org.a7fa7fa.httpserver.http;
 
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
+import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
+import org.a7fa7fa.httpserver.parser.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -31,6 +37,18 @@ public class Context {
         return this.httpRequest.toString() + " - " + this.responseProcessor.getResponse().toString();
     }
 
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public String getCookieValue(String cookieName) {
+        HttpHeader cookieHeader = httpRequest.getHeader(HeaderName.COOKIE);
+        if (cookieHeader == null) return null;
+
+        return cookieHeader.getValue();
+
+    }
+
     public HttpRequest getHttpRequest() {
         return httpRequest;
     }
@@ -45,6 +63,13 @@ public class Context {
 
     public byte[] readTargetFromFile() throws HttpParsingException, IOException {
         return this.responseProcessor.readDataFromFile(this.httpRequest, this.configuration.getWebroot());
+    }
+
+    public void setResponse(Object obj) throws IOException {
+        JsonNode node = Json.toJson(obj);
+        String data = Json.stringify(node);
+        this.responseProcessor.prepareResponse(data.getBytes(), this.httpRequest, this.configuration.getGzipMinFileSizeKb());
+        this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "application/json"));
     }
 
     public void setResponse(byte[] data) throws IOException {

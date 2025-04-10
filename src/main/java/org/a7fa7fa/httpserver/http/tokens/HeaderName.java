@@ -11,7 +11,9 @@ public enum HeaderName {
     DATE("Date"),
     HOST("Host"),
     ACCEPT("Accept"),
-    CONNECTION("Connection");
+    CONNECTION("Connection"),
+    SET_COOKIE("Set-Cookie"),
+    COOKIE("Cookie");
 
     private final String fieldNameLowerCase;
 

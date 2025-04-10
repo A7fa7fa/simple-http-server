@@ -1,15 +1,14 @@
 package org.a7fa7fa.httpserver.controller;
 
-import org.a7fa7fa.httpserver.http.ClientDisconnectException;
 import org.a7fa7fa.httpserver.http.Context;
-import org.a7fa7fa.httpserver.http.HttpParsingException;
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class StaticSite implements Controller {
 

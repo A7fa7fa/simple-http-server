@@ -1,11 +1,10 @@
 package org.a7fa7fa.myserver;
-
 import org.a7fa7fa.httpserver.controller.Controller;
 import org.a7fa7fa.httpserver.controller.RegisterFunction;
-import org.a7fa7fa.httpserver.http.ClientDisconnectException;
 import org.a7fa7fa.httpserver.http.Context;
 import org.a7fa7fa.httpserver.http.HttpHeader;
-import org.a7fa7fa.httpserver.http.HttpParsingException;
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
@@ -22,7 +21,7 @@ public class DefaultApiEndpoint implements Controller {
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/config")
     public static void myStaticFunction(Context context) throws HttpParsingException, IOException, ClientDisconnectException {
-        byte[] fileContent = context.readContentFromFile("src/main/resources/http.json");
+        byte[] fileContent = context.readContentFromFile(context.getConfiguration().getFileLocation());
         context.setResponse(fileContent);
         context.setDefaultResponseHeader();
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);

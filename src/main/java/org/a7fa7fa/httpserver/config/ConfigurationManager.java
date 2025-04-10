@@ -41,6 +41,7 @@ public class ConfigurationManager {
             while ((i = fileReader.read()) !=-1) {
                 sb.append((char)i);
             }
+            fileReader.close();
         } catch (IOException e) {
             throw new HttpConfigurationException(e);
         }
@@ -54,6 +55,7 @@ public class ConfigurationManager {
 
         try {
             myCurrentConfiguration = Json.fromJson(conf, Configuration.class);
+            myCurrentConfiguration.setFileLocation(filePath);
         } catch (JsonProcessingException e) {
             throw new HttpConfigurationException("Error parsing the configuration file, internal.", e);
         }

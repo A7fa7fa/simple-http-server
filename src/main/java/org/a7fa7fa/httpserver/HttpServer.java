@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class HttpServer {
 
@@ -19,16 +17,6 @@ public class HttpServer {
     private final static ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
     private Configuration conf;
-
-    public HttpServer() {
-        String confPath = "src/main/resources/http.json";
-
-        if (Files.exists(Paths.get("http.json"))) {
-            confPath = "http.json";
-        }
-        this.setConfiguration(confPath);
-        LOGGER.info("Config located : " + confPath);
-    }
 
     public HttpServer(String configLocation) {
         this.setConfiguration(configLocation);
@@ -43,6 +31,8 @@ public class HttpServer {
         LOGGER.info("Min file size for compressing : " + this.conf.getGzipMinFileSizeKb());
         LOGGER.info("Log level : " + this.conf.getLogLevelLiteral());
         LOGGER.info("Api path : " + this.conf.getApiPath());
+        LOGGER.info("File conf : " + this.conf.getFileLocation());
+        LOGGER.info("Max body size : " + this.conf.getMaxBodySize());
 
         rootLogger.setLevel(this.conf.getLoglevel());
     }

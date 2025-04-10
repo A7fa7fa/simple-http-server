@@ -1,4 +1,4 @@
-package org.a7fa7fa.httpserver.http;
+package org.a7fa7fa.httpserver.http.exceptions;
 
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 

@@ -1,6 +1,6 @@
 package org.a7fa7fa.httpserver.staticcontent;
 
-import org.a7fa7fa.httpserver.http.HttpParsingException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
