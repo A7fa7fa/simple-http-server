@@ -1,0 +1,77 @@
+#1 [internal] load build definition from Dockerfile
+#1 sha256:ce8d8d04fb73809f4168b60961820eb9fe49fa64145f550db47fa17674f2e13c
+#1 transferring dockerfile: 1.12kB done
+#1 DONE 0.0s
+
+#2 [internal] load .dockerignore
+#2 sha256:b141fdda5a4547fe84c6c8920ceb3330b9e040cd5051240b33548a803ed5dfc6
+#2 transferring context: 2B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/alpine:latest
+#3 sha256:d4fb25f5b5c00defc20ce26f2efc4e288de8834ed5aa59dff877b495ba88fda6
+#3 DONE 3.3s
+
+#4 [stage-1 1/6] FROM docker.io/library/alpine:latest@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
+#4 sha256:3f813edbf539d5c338c348db019e585ff2756125f877d43b7123d99fe03df07d
+#4 DONE 0.0s
+
+#11 [internal] load build context
+#11 sha256:84dd5fc6ce98523a5e8aaa4b5a868873753cb6d540a5f8f5051ae0166c55b75b
+#11 transferring context: 218.97kB done
+#11 DONE 0.0s
+
+#10 [build 5/8] RUN mvn -version
+#10 sha256:181a0d51a3e22b8cabe2b699645e8bf2fda8771010382f0cc7da60e759c4bad3
+#10 CACHED
+
+#9 [build 4/8] RUN java -version
+#9 sha256:c8e8e527d56a993a21bd3e2ff2589c67613c254a1237df10d24b108b6b36ce05
+#9 CACHED
+
+#15 [stage-1 4/6] COPY --from=build /home/app/target/simple-http-server-1.1-SNAPSHOT.jar /usr/local/lib/demo.jar
+#15 sha256:9a7a3f89170d23f9a7b25635f918d06de3e9ffcebcb15b091754a0c1abecb05c
+#15 CACHED
+
+#16 [stage-1 5/6] RUN mkdir -p /home/app/public
+#16 sha256:6f2cc56d0d6d1f3c2b6c67a289065fe765b3511584e5d228de162c85a6a2a77c
+#16 CACHED
+
+#8 [build 3/8] RUN which java
+#8 sha256:46234957655a98a6cc7ca5d8d9291af2b0a95ef28e8307fd810479006fa5752b
+#8 CACHED
+
+#6 [stage-1 3/6] RUN java -version
+#6 sha256:cc483de4ed640fba51cc6742738beecc0ab3930f2784d744b450c5e95b8e81aa
+#6 CACHED
+
+#14 [build 8/8] RUN mvn -f /home/app/pom.xml clean package
+#14 sha256:2b55933356c25c4fa52811bd6ccba8bba5ebc95d05180a9e3a6b8703d5117b68
+#14 CACHED
+
+#7 [build 2/8] RUN  apk update   && apk upgrade   && apk add --update openjdk23-jdk --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/   && apk add --update maven
+#7 sha256:212bf3c2ade9047ff106746f8b7409ac0c70383a8d9475e0c7e07e6814d875a2
+#7 CACHED
+
+#12 [build 6/8] COPY src /home/app/src
+#12 sha256:622b6db98fd2f90a7af7772eeda37d16f2a93ad418580e9dc845f4e1d21ef7c3
+#12 CACHED
+
+#5 [stage-1 2/6] RUN  apk update   && apk upgrade   && apk add ca-certificates   && update-ca-certificates   && apk add --update openjdk23-jre --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/   && apk add mailcap   && rm -rf /var/cache/apk/*
+#5 sha256:3865d0b9676d8cc642e50a29235825a721e2119474bd7ffcfb389f661aebd776
+#5 CACHED
+
+#13 [build 7/8] COPY pom.xml /home/app
+#13 sha256:ce2eadf00567e13c69df7fd6269cf7bfb58369d657656839a6726b491f8c1f09
+#13 CACHED
+
+#17 [stage-1 6/6] COPY src/main/resources/http.json /home/app
+#17 sha256:e5408f6bbc93571861d4ba01e1cd8c514d5a747fd75832ef2750de5ccc53ea55
+#17 CACHED
+
+#18 exporting to image
+#18 sha256:e8c613e07b0b7ff33893b694f7759a10d42e180f2b4dc349fb57dc6b71dcab00
+#18 exporting layers done
+#18 writing image sha256:8bd7cfdd7f34f9cf7b994962371936763902146c3de2f82e241e007cd203b133 done
+#18 naming to docker.io/library/http:latest done
+#18 DONE 0.0s

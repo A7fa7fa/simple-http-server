@@ -37,8 +37,8 @@ RUN  apk update \
 
 RUN java -version
 
-COPY --from=build /home/app/target/simple-http-server-1.1-SNAPSHOT.jar /usr/local/lib/demo.jar
+COPY --from=build /home/app/target/simple-http-server-1.1-SNAPSHOT-shaded.jar /usr/local/lib/http.jar
 RUN mkdir -p /home/app/public
 COPY src/main/resources/http.json /home/app
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/usr/local/lib/demo.jar", "/home/app/http.json"]
+ENTRYPOINT ["java","-jar","/usr/local/lib/http.jar", "/home/app/http.json"]
