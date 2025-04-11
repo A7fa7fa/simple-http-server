@@ -184,7 +184,8 @@ public class HttpParser {
 
             boolean isLeadingSpace = processingDataBuffer.isEmpty() && (char) _byte == SP;
             if (!isLeadingSpace) {
-                processingDataBuffer.append((char) this.toLowercase(_byte));
+                if (!headerNameFound) _byte = (char) this.toLowercase(_byte);
+                processingDataBuffer.append((char) _byte);
             }
 
             boolean isSpacePrecededLine = isLeadingSpace && !headerNameFound;

@@ -39,6 +39,29 @@ class HttpParserTest {
         assertEquals(httpRequest.getHeader(HeaderName.CONTENT_LENGTH).getValue(), "14");
         assertEquals(httpRequest.getBody(), "body1\r\nbody2\r\n");
     }
+
+    @Test
+    void parseHttpRequestHeaderValueCheckCaseSensitive() {
+        HttpRequest httpRequest = null;
+        try {
+            String rawData = "GET / HTTP/1.1\r\n" +
+                    "Host: localhost:8080\r\n" +
+                    "Cookie: lowercase+UPPERCASE\r\n" +
+                    "Content-Length: 14\r\n" +
+                    "\r\n" +
+                    "body1\r\n" +
+                    "body2\r\n" +
+                    "\r\n";
+            InputStream inputStream = new ByteArrayInputStream(rawData.getBytes(StandardCharsets.US_ASCII));
+
+            httpRequest = httpParser.parseHttpRequest(inputStream, 1024);
+        } catch (HttpParsingException e) {
+            fail(e);
+        }
+        assertNotNull(httpRequest);
+        assertEquals(httpRequest.getHeader(HeaderName.COOKIE).getValue(), "lowercase+UPPERCASE");
+    }
+
     @Test
     void parseHttpRequestNoClosingLineBreak() {
         HttpRequest httpRequest = null;
