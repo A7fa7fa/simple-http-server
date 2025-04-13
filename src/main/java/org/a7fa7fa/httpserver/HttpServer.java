@@ -1,15 +1,15 @@
 package org.a7fa7fa.httpserver;
 
-import org.a7fa7fa.httpserver.controller.Controller;
-import org.a7fa7fa.httpserver.controller.StaticSite;
+import java.io.IOException;
+
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.config.ConfigurationManager;
+import org.a7fa7fa.httpserver.controller.Controller;
+import org.a7fa7fa.httpserver.controller.StaticSite;
 import org.a7fa7fa.httpserver.core.Router;
 import org.a7fa7fa.httpserver.core.ServerListenerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class HttpServer {
 
@@ -33,6 +33,7 @@ public class HttpServer {
         LOGGER.info("Api path : " + this.conf.getApiPath());
         LOGGER.info("File conf : " + this.conf.getFileLocation());
         LOGGER.info("Max body size : " + this.conf.getMaxBodySize());
+        LOGGER.info("Host : " + this.conf.getHost());
 
         rootLogger.setLevel(this.conf.getLoglevel());
     }

@@ -11,6 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.a7fa7fa.httpserver.config.Configuration;
+import org.a7fa7fa.httpserver.config.ConfigurationManager;
+
 
 public class HttpResponse extends HttpMessage {
 
@@ -97,11 +100,11 @@ public class HttpResponse extends HttpMessage {
         return this.httpHeaders.get(name.getName());
     }
 
-    public void setDefaultHeader() {
-        this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
-        this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
-        this.addHeader(new HttpHeader(HeaderName.HOST, "localhost"));
-        this.addHeader(new HttpHeader(HeaderName.CONNECTION, "close"));
+    public void setDefaultHeader(Configuration config) {
+        if (this.httpHeaders.get(HeaderName.SERVER.getName()) == null) this.addHeader(new HttpHeader(HeaderName.SERVER, "simple-http-server"));
+        if (this.httpHeaders.get(HeaderName.DATE.getName()) == null) this.addHeader(new HttpHeader(HeaderName.DATE, this.getServerTime()));
+        if (this.httpHeaders.get(HeaderName.HOST.getName()) == null) this.addHeader(new HttpHeader(HeaderName.HOST, config.getHost()));
+        if (this.httpHeaders.get(HeaderName.CONNECTION.getName()) == null) this.addHeader(new HttpHeader(HeaderName.CONNECTION, "close"));
     }
 
     public byte[] buildStatusWithHeaders() {

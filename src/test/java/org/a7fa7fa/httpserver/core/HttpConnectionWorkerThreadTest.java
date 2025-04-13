@@ -2,14 +2,13 @@ package org.a7fa7fa.httpserver.core;
 
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.parser.ByteProcessor;
-import org.a7fa7fa.httpserver.staticcontent.Reader;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HttpConnectionWorkerThreadTest {
@@ -23,6 +22,7 @@ class HttpConnectionWorkerThreadTest {
         config.setPort(8080);
         config.setLogLevel("error");
         config.setGzipMinFileSizeKb(5);
+        config.setHost("localhost");
         Router router = Router.getInstance(config);
         router.register(MockController.class);
     }
@@ -48,12 +48,12 @@ class HttpConnectionWorkerThreadTest {
                     "content-length: 25\r\n" +
                     "server: simple-http-server\r\n" +
                     "host: localhost\r\n" +
-                    "content-type: text\r\n" +
                     "connection: close\r\n" +
+                    "content-type: text\r\n" +
                     "\r\n" +
                     "this is the file returned";
 
-            assertEquals(out, expected);
+            assertEquals(expected, out);
         } catch (Exception e) {
             fail(e);
         }

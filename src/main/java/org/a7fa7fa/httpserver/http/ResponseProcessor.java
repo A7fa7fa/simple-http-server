@@ -1,5 +1,11 @@
 package org.a7fa7fa.httpserver.http;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+
+import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
 import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
@@ -9,22 +15,19 @@ import org.a7fa7fa.httpserver.staticcontent.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-
 public class ResponseProcessor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ResponseProcessor.class);
 
     private final HttpResponse httpResponse;
     private final OutputStream outputStream;
+    private final Configuration configuration;
 
 
-    public ResponseProcessor(HttpResponse httpResponse, OutputStream outputStream) {
+    public ResponseProcessor(HttpResponse httpResponse, OutputStream outputStream, Configuration configuration) {
         this.httpResponse = httpResponse;
         this.outputStream = outputStream;
+        this.configuration = configuration;
     }
 
     HttpResponse getResponse() {
@@ -62,7 +65,7 @@ public class ResponseProcessor {
         if (this.httpResponse.getContentType() != null) {
             this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, this.httpResponse.getContentType()));
         }
-
+        
         // TODO You should not allow your web server to compress image files or PDF files
         // these files are already compressed and by compressing them again you’re not only wasting CPU resources but you can actually make the resulting file larger by compressing them again
         String encodingToken = "gzip";
@@ -75,6 +78,7 @@ public class ResponseProcessor {
         }
         this.httpResponse.addBody(fileContent);
         this.httpResponse.addHeader(new HttpHeader(HeaderName.CONTENT_LENGTH, String.valueOf(fileContent.length)));
+        this.httpResponse.setDefaultHeader(this.configuration);
         LOGGER.debug("Request prepared and added to response");
     }
 

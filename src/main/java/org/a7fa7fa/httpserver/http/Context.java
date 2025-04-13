@@ -1,7 +1,10 @@
 package org.a7fa7fa.httpserver.http;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import org.a7fa7fa.httpserver.config.Configuration;
-import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
 import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
@@ -11,10 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class Context {
 
@@ -70,18 +69,22 @@ public class Context {
         String data = Json.stringify(node);
         this.responseProcessor.prepareResponse(data.getBytes(), this.httpRequest, this.configuration.getGzipMinFileSizeKb());
         this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "application/json"));
+        this.setDefaultResponseHeader();
+        
     }
 
     public void setResponse(byte[] data) throws IOException {
         this.responseProcessor.prepareResponse(data, this.httpRequest, this.configuration.getGzipMinFileSizeKb());
+        this.setDefaultResponseHeader();
     }
 
     public void setResponseStatus(HttpStatusCode code) {
         this.responseProcessor.getResponse().setStatusCode(code);
+        this.setDefaultResponseHeader();
     }
 
-    public void setDefaultResponseHeader(){
-        this.responseProcessor.getResponse().setDefaultHeader();
+    private void setDefaultResponseHeader(){
+        this.responseProcessor.getResponse().setDefaultHeader(this.configuration);
         if (this.httpRequest.isPersistentConnection()) {
             this.addHeader(new HttpHeader(HeaderName.CONNECTION, "keep-alive"));
         }

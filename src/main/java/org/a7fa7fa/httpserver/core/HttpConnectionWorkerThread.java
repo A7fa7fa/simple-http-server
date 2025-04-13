@@ -1,21 +1,24 @@
 package org.a7fa7fa.httpserver.core;
 
-import org.a7fa7fa.httpserver.config.Configuration;
-import org.a7fa7fa.httpserver.http.*;
-import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
-import org.a7fa7fa.httpserver.http.exceptions.HttpException;
-import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
-import org.a7fa7fa.httpserver.http.tokens.HeaderName;
-import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
-import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+
+import org.a7fa7fa.httpserver.config.Configuration;
+import org.a7fa7fa.httpserver.http.Context;
+import org.a7fa7fa.httpserver.http.HttpParser;
+import org.a7fa7fa.httpserver.http.HttpRequest;
+import org.a7fa7fa.httpserver.http.HttpResponse;
+import org.a7fa7fa.httpserver.http.ResponseProcessor;
+import org.a7fa7fa.httpserver.http.exceptions.ClientDisconnectException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpException;
+import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
+import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
+import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpConnectionWorkerThread extends Thread {
 
@@ -61,10 +64,11 @@ public class HttpConnectionWorkerThread extends Thread {
                 HttpResponse response = new HttpResponse(request.getBestCompatibleHttpVersion());
 
                 Router router = Router.getInstance(configuration);
-                ResponseProcessor responseProcessor = new ResponseProcessor(response, outputStream);
+                ResponseProcessor responseProcessor = new ResponseProcessor(response, outputStream, this.configuration);
                 Context context = new Context(request, this.configuration, responseProcessor);
                 router.invoke(context);
                 if (!response.isAlreadySend()) {
+                    response.setDefaultHeader(this.configuration);
                     byte[] responseMessage = response.buildCompleteMessage();
                     responseProcessor.pipe(responseMessage);
                 }
@@ -95,7 +99,7 @@ public class HttpConnectionWorkerThread extends Thread {
             if (outputStream != null) {
                 HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
                 response.setStatusCode(code);
-                response.setDefaultHeader();
+                response.setDefaultHeader(this.configuration);
                 LOGGER.error("Error response set : {}", response.getStatusLine());
                 try {
                     outputStream.write(response.buildCompleteMessage());
@@ -107,7 +111,7 @@ public class HttpConnectionWorkerThread extends Thread {
             if (outputStream != null) {
                 HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
                 response.setStatusCode(e.getErrorCode());
-                response.setDefaultHeader();
+                response.setDefaultHeader(this.configuration);
                 LOGGER.debug("Error response set : {}", response.getStatusLine());
                 try {
                     outputStream.write(response.buildCompleteMessage());

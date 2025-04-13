@@ -1,4 +1,8 @@
 package org.a7fa7fa.myserver;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Random;
+
 import org.a7fa7fa.httpserver.controller.Controller;
 import org.a7fa7fa.httpserver.controller.RegisterFunction;
 import org.a7fa7fa.httpserver.http.Context;
@@ -12,10 +16,6 @@ import org.a7fa7fa.httpserver.staticcontent.Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Random;
-
 public class DefaultApiEndpoint implements Controller {
     private final static Logger LOGGER = LoggerFactory.getLogger(DefaultApiEndpoint.class);
 
@@ -23,7 +23,6 @@ public class DefaultApiEndpoint implements Controller {
     public static void myStaticFunction(Context context) throws HttpParsingException, IOException, ClientDisconnectException {
         byte[] fileContent = context.readContentFromFile(context.getConfiguration().getFileLocation());
         context.setResponse(fileContent);
-        context.setDefaultResponseHeader();
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.send();
         LOGGER.debug("myStaticFunction called with HttpRequest: " + context);
@@ -31,7 +30,6 @@ public class DefaultApiEndpoint implements Controller {
 
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/stream-file")
     public static void anotherStaticFunction(Context context) throws IOException, ClientDisconnectException {
-        context.setDefaultResponseHeader();
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.sendStatusAndHeader();
@@ -61,7 +59,6 @@ public class DefaultApiEndpoint implements Controller {
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/stream")
     public static void yetAnotherStaticFunction(Context context) throws ClientDisconnectException, IOException {
 
-        context.setDefaultResponseHeader();
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.sendStatusAndHeader();
@@ -75,7 +72,6 @@ public class DefaultApiEndpoint implements Controller {
     @RegisterFunction(targetMethod = HttpMethod.GET, target = "/stream-random")
     public static void randomStream(Context context) throws InterruptedException, ClientDisconnectException {
 
-        context.setDefaultResponseHeader();
         context.addHeader(new HttpHeader(HeaderName.TRANSFER_ENCODING, "chunked"));
         context.setResponseStatus(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         context.sendStatusAndHeader();

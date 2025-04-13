@@ -1,21 +1,20 @@
 package org.a7fa7fa.httpserver.http;
 
-import org.a7fa7fa.httpserver.config.Configuration;
-import org.a7fa7fa.httpserver.http.tokens.HeaderName;
-import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
-import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
-import org.a7fa7fa.httpserver.parser.ByteProcessor;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.a7fa7fa.httpserver.config.Configuration;
+import org.a7fa7fa.httpserver.http.tokens.HeaderName;
+import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
+import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ContextTest {
@@ -29,6 +28,7 @@ class ContextTest {
         config.setPort(8080);
         config.setLogLevel("error");
         config.setGzipMinFileSizeKb(5);
+        config.setHost("localhost");
     }
 
     @Test
@@ -36,7 +36,7 @@ class ContextTest {
         HttpRequest request = new HttpRequest();
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
-        ResponseProcessor rp = new ResponseProcessor(response, outputStream);
+        ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
         Context context = new Context(request, config, rp);
         context.setResponseStatus(HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR);
         assertEquals(context.getHttpResponse().getStatusCode(), HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR);
@@ -47,7 +47,7 @@ class ContextTest {
         HttpRequest request = new HttpRequest();
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
-        ResponseProcessor rp = new ResponseProcessor(response, outputStream);
+        ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
         Context context = new Context(request, config, rp);
 
         String responseData = "this is the date responded";
@@ -68,7 +68,7 @@ class ContextTest {
         HttpRequest request = new HttpRequest();
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
-        ResponseProcessor rp = new ResponseProcessor(response, outputStream);
+        ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
         Context context = new Context(request, config, rp);
 
         String responseData = "this is the date responded";
@@ -86,7 +86,7 @@ class ContextTest {
         HttpRequest request = new HttpRequest();
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
-        ResponseProcessor rp = new ResponseProcessor(response, outputStream);
+        ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
         Context context = new Context(request, config, rp);
 
         request.addHeader(new HttpHeader(HeaderName.ACCEPT_ENCODING, "gzip"));

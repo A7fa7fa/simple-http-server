@@ -11,6 +11,7 @@ public class Configuration {
     private String apiPath;
     private int maxBodySize;
     private String fileLocation;
+    private String host;
 
     public int getPort() {
         return port;
@@ -72,5 +73,13 @@ public class Configuration {
 
     public void setFileLocation(String fileLocation) {
         this.fileLocation = fileLocation;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 }

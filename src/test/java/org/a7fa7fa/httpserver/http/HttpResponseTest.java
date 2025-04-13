@@ -1,17 +1,33 @@
 package org.a7fa7fa.httpserver.http;
 
+import java.nio.charset.StandardCharsets;
+
+import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
 import org.a7fa7fa.httpserver.parser.ByteProcessor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 class HttpResponseTest {
+    
+    static private Configuration config;
+
+    @BeforeAll
+    public static void beforeClass(){
+        config = new Configuration();
+        config.setApiPath("api");
+        config.setPort(8080);
+        config.setLogLevel("error");
+        config.setGzipMinFileSizeKb(5);
+        config.setHost("localhost");
+    }
+    
     @Test
     void getStatusLineOkTest() {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
@@ -43,7 +59,7 @@ class HttpResponseTest {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         assertNotNull(response);
-        response.setDefaultHeader();
+        response.setDefaultHeader(this.config);
         assertTrue(response.getHttpHeaders().contains("server"));
         assertTrue(response.getHttpHeaders().contains("date"));
     }
@@ -111,7 +127,7 @@ class HttpResponseTest {
 
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
-        response.setDefaultHeader();
+        response.setDefaultHeader(this.config);
         HttpHeader dateHeader = new HttpHeader();
         dateHeader.setName("date");
         dateHeader.setValue("123456798");
@@ -139,7 +155,7 @@ class HttpResponseTest {
 
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
-        response.setDefaultHeader();
+        response.setDefaultHeader(this.config);
         HttpHeader dateHeader = new HttpHeader();
         dateHeader.setName("date");
         dateHeader.setValue("123456798");
@@ -170,7 +186,7 @@ class HttpResponseTest {
 
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
-        response.setDefaultHeader();
+        response.setDefaultHeader(this.config);
         HttpHeader dateHeader = new HttpHeader();
         dateHeader.setName("date");
         dateHeader.setValue("123456798");
@@ -198,7 +214,7 @@ class HttpResponseTest {
 
         response.setStatusCode(HttpStatusCode.SUCCESSFUL_RESPONSE_200_OK);
         response.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "json"));
-        response.setDefaultHeader();
+        response.setDefaultHeader(this.config);
         HttpHeader dateHeader = new HttpHeader();
         dateHeader.setName("date");
         dateHeader.setValue("123456798");
