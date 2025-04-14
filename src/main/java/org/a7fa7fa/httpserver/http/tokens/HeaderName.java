@@ -13,7 +13,8 @@ public enum HeaderName {
     ACCEPT("Accept"),
     CONNECTION("Connection"),
     SET_COOKIE("Set-Cookie"),
-    COOKIE("Cookie");
+    COOKIE("Cookie"),
+    USER_AGENT("user-agent");
 
     private final String fieldNameLowerCase;
 

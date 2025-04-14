@@ -21,11 +21,13 @@ public class Context {
     private final HttpRequest httpRequest;
     private final Configuration configuration;
     private final ResponseProcessor responseProcessor;
+    private final String ipAdress;
 
-    public Context(HttpRequest httpRequest, Configuration configuration, ResponseProcessor responseProcessor) {
+    public Context(HttpRequest httpRequest, Configuration configuration, ResponseProcessor responseProcessor, String ipAdress) {
         this.httpRequest = httpRequest;
         this.configuration = configuration;
         this.responseProcessor = responseProcessor;
+        this.ipAdress = ipAdress;
     }
 
     public void addHeader(HttpHeader header) {
@@ -56,6 +58,10 @@ public class Context {
         return this.responseProcessor.getResponse();
     }
 
+    public String getIpAdress() {
+        return this.ipAdress;
+    }
+
     public byte[] readContentFromFile(String fileLocation) throws HttpParsingException, IOException {
         return this.responseProcessor.readDataFromAbsoluteFile(this.httpRequest, fileLocation);
     }
@@ -70,7 +76,7 @@ public class Context {
         this.responseProcessor.prepareResponse(data.getBytes(), this.httpRequest, this.configuration.getGzipMinFileSizeKb());
         this.addHeader(new HttpHeader(HeaderName.CONTENT_TYPE, "application/json"));
         this.setDefaultResponseHeader();
-        
+
     }
 
     public void setResponse(byte[] data) throws IOException {
@@ -91,10 +97,12 @@ public class Context {
     }
 
     public void send() throws ClientDisconnectException {
+        setDefaultResponseHeader();
         this.responseProcessor.sendFullMessage();
     }
 
     public void sendStatusAndHeader() throws ClientDisconnectException {
+        setDefaultResponseHeader();
         this.responseProcessor.sendWithoutBody();
     }
 

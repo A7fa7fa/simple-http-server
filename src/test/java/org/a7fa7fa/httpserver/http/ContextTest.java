@@ -37,7 +37,7 @@ class ContextTest {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
         ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
-        Context context = new Context(request, config, rp);
+        Context context = new Context(request, config, rp, "");
         context.setResponseStatus(HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR);
         assertEquals(context.getHttpResponse().getStatusCode(), HttpStatusCode.CLIENT_ERROR_500_INTERNAL_SEVER_ERROR);
     }
@@ -48,7 +48,7 @@ class ContextTest {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
         ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
-        Context context = new Context(request, config, rp);
+        Context context = new Context(request, config, rp, "");
 
         String responseData = "this is the date responded";
         String contentLength = String.valueOf(responseData.length());
@@ -69,7 +69,8 @@ class ContextTest {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
         ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
-        Context context = new Context(request, config, rp);
+        Context context = new Context(request, config, rp, "");
+
 
         String responseData = "this is the date responded";
         String contentLength = String.valueOf(responseData.length());
@@ -87,7 +88,8 @@ class ContextTest {
         HttpResponse response = new HttpResponse(HttpVersion.HTTP_1_1);
         OutputStream outputStream = new ByteArrayOutputStream();
         ResponseProcessor rp = new ResponseProcessor(response, outputStream, this.config);
-        Context context = new Context(request, config, rp);
+        Context context = new Context(request, config, rp, "");
+
 
         request.addHeader(new HttpHeader(HeaderName.ACCEPT_ENCODING, "gzip"));
 

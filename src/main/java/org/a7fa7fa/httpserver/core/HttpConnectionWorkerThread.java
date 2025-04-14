@@ -3,6 +3,7 @@ package org.a7fa7fa.httpserver.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -65,7 +66,8 @@ public class HttpConnectionWorkerThread extends Thread {
 
                 Router router = Router.getInstance(configuration);
                 ResponseProcessor responseProcessor = new ResponseProcessor(response, outputStream, this.configuration);
-                Context context = new Context(request, this.configuration, responseProcessor);
+                InetAddress inet = socket.getInetAddress();
+                Context context = new Context(request, this.configuration, responseProcessor, (inet != null) ? inet.toString() : "");
                 router.invoke(context);
                 if (!response.isAlreadySend()) {
                     response.setDefaultHeader(this.configuration);

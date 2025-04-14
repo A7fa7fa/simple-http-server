@@ -87,6 +87,10 @@ public class HttpRequest extends HttpMessage {
         return this.httpHeaders.get(field.getName());
     }
 
+    public HttpHeader getHeader(String headerName) {
+        return this.httpHeaders.get(headerName);
+    }
+
     public boolean isPersistentConnection() {
         return this.getHeader(HeaderName.CONNECTION) != null &&  this.getHeader(HeaderName.CONNECTION).getValue().equalsIgnoreCase("keep-alive") ;
     }
