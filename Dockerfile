@@ -5,13 +5,13 @@ FROM alpine:latest AS build
 
 RUN  apk update \
   && apk upgrade \
-  && apk add --update openjdk23-jdk --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
+  && apk add --update openjdk21-jdk \
   && apk add --update maven
 
 
-ENV JAVA_HOME="/usr/lib/jvm/java-23-openjdk"
+ENV JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
-ENV JAVA_VERSION=23
+ENV JAVA_VERSION=21
 
 RUN which java
 RUN java -version
@@ -30,7 +30,7 @@ RUN  apk update \
   && apk upgrade \
   && apk add ca-certificates \
   && update-ca-certificates \
-  && apk add --update openjdk23-jre --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
+  && apk add --update openjdk21-jre \
   # add mime type information /etc/mime.types
   && apk add mailcap \
   && rm -rf /var/cache/apk/*
