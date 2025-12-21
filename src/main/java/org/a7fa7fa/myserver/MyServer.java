@@ -1,11 +1,11 @@
 package org.a7fa7fa.myserver;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.a7fa7fa.httpserver.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 
 public class MyServer {

@@ -1,5 +1,14 @@
 package org.a7fa7fa.httpserver.http;
 
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.a7fa7fa.httpserver.http.tokens.HttpVersion;
@@ -7,20 +16,13 @@ import org.a7fa7fa.httpserver.parser.ByteProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import org.a7fa7fa.httpserver.config.Configuration;
-import org.a7fa7fa.httpserver.config.ConfigurationManager;
-
 
 public class HttpResponse extends HttpMessage {
 
     final static Logger LOGGER = LoggerFactory.getLogger(HttpResponse.class);
     private HttpStatusCode statusCode;
     private final HttpVersion httpVersion;
-    private final HashMap<String, HttpHeader> httpHeaders = new HashMap<String, HttpHeader>();
+    private final HashMap<String, HttpHeader> httpHeaders = new HashMap<>();
     private byte[] body = new byte[0];
     private final String CRLF = "\r\n";
     private boolean alreadySend = false;

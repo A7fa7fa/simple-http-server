@@ -1,10 +1,8 @@
 package org.a7fa7fa.httpserver.config;
 
-import ch.qos.logback.classic.Level;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
+
+import ch.qos.logback.classic.Level;
 
 public class LogLevel {
 

@@ -1,23 +1,25 @@
 package org.a7fa7fa.httpserver.core;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+
 import org.a7fa7fa.httpserver.config.Configuration;
 import org.a7fa7fa.httpserver.controller.Controller;
 import org.a7fa7fa.httpserver.controller.ControllerType;
 import org.a7fa7fa.httpserver.controller.RegisterFunction;
 import org.a7fa7fa.httpserver.http.Context;
-import org.a7fa7fa.httpserver.http.HttpResponse;
-import org.a7fa7fa.httpserver.http.exceptions.HttpException;
 import org.a7fa7fa.httpserver.http.exceptions.HttpParsingException;
 import org.a7fa7fa.httpserver.http.tokens.HttpMethod;
-import org.a7fa7fa.httpserver.http.HttpRequest;
 import org.a7fa7fa.httpserver.http.tokens.HttpStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.function.Consumer;
 
 public class Router {
 

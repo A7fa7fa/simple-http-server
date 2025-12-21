@@ -1,8 +1,8 @@
 package org.a7fa7fa.httpserver.http;
 
-import org.a7fa7fa.httpserver.http.tokens.HeaderName;
-
 import java.nio.charset.StandardCharsets;
+
+import org.a7fa7fa.httpserver.http.tokens.HeaderName;
 
 public class HttpHeader {
 
